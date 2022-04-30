@@ -34,13 +34,6 @@ public class ViewPort {
         return new ViewPort(nx1, ny1, nx1 + mw / w, ny1 + mh / h);
     }
 
-    public boolean isCloser(ViewPort main, ViewPort candidate) {
-        ViewPort t = relativeTo(main), c = candidate.relativeTo(main);
-        if (Math.sqrt(c.x1 * c.x1 + c.y1 * c.y1) < Math.sqrt(t.x1 * t.x1 + t.y1 * t.y1)) return false;
-        double ta = t.getHeight() * t.getWidth(), ca = c.getHeight() * c.getWidth();
-        return Math.abs(1 - ca) < Math.abs(1 - ta);
-    }
-
     public ViewPort sort() {
         return new ViewPort(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2));
     }
@@ -71,6 +64,15 @@ public class ViewPort {
         return new ViewPort(x1 + dnw, y1 + dnh, x2 - dnw, y2 - dnh);
     }
 
+    public ViewPort strechX(double sx) {
+        double dnw = getWidth() * (sx - 1.0) / 2;
+        return new ViewPort(x1 - dnw, y1, x2 + dnw, y2);
+    }
+
+    public ViewPort strechY(double sy) {
+        double dnh = getHeight() * (sy - 1.0) / 2;
+        return new ViewPort(x1, y1 - dnh, x2, y2 + dnh);
+    }
 
 //    private static boolean feq(double a, double b) {
 //        return Math.abs(a - b) < 0.0001;

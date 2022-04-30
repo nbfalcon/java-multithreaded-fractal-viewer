@@ -55,8 +55,8 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
 
         @Override
         public void cancel() {
-            if (!taskCancelled) {
-                taskCancelled = true;
+            taskCancelled = true;
+            if (cancelFutures != null) {
                 cancelFutures.forEach(cancelFuture -> cancelFuture.cancel(true));
                 cancelFutures = null;
             }

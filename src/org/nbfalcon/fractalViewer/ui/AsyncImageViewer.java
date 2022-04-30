@@ -6,18 +6,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
 public class AsyncImageViewer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
     private final AsyncImageRenderer renderer;
+    public boolean settingSquareSelection = true;
+    public boolean settingCompensateAspectRatio = true;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
     private ViewPort myViewPort = new ViewPort(-2.0, 2.0, 2.0, -2.0);
     private ImageCtx bestImage = null;
     private boolean wantRedraw = true;
-
-    public boolean settingSquareSelection = true;
-    public boolean settingCompensateAspectRatio = true;
 
     public AsyncImageViewer(AsyncImageRenderer renderer) {
         super();
@@ -66,8 +66,7 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
                 double dyM = dy < 0 ? -deltaMax : deltaMax;
                 selection.x2 = selection.x1 + dxM;
                 selection.y2 = selection.y1 + dyM;
-            }
-            else {
+            } else {
                 selection.x2 = x;
                 selection.y2 = y;
             }
@@ -139,8 +138,7 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (wantRedraw
-                || (bestImage != null && (bestImage.image.getWidth() != getWidth() || bestImage.image.getHeight() != getHeight()))) {
+        if (wantRedraw || (bestImage != null && (bestImage.image.getWidth() != getWidth() || bestImage.image.getHeight() != getHeight()))) {
             redrawAsync();
             wantRedraw = false;
         }
@@ -166,7 +164,16 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     }
 
     private void redrawAsync() {
-        ViewPort viewPort = myViewPort.copy();
+        ViewPort viewPort;
+        if (getHeight() == getWidth()) {
+            viewPort = myViewPort.copy();
+        }
+        else if (getHeight() > getWidth()) {
+            viewPort = myViewPort.strechY((double) getHeight() / getWidth());
+        }
+        else /* if getWidth() > getHeight() */ {
+            viewPort = myViewPort.strechX((double) getWidth() / getHeight());
+        }
         renderer.render(viewPort, getWidth(), getHeight(), (image) -> SwingUtilities.invokeLater(() -> {
             bestImage = new ImageCtx(viewPort, image);
             repaint();
@@ -180,6 +187,10 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         } else {
             setViewPort(myViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
         }
+    }
+
+    public interface AsyncImageRenderer {
+        void render(ViewPort viewPort, int width, int height, Consumer<BufferedImage> then);
     }
 
     private static class ImageCtx {
