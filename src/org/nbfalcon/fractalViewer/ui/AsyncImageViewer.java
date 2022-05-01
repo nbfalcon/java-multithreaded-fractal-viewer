@@ -10,11 +10,16 @@ import java.util.function.Consumer;
 
 public class AsyncImageViewer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
-    private final AsyncImageRenderer renderer;
+    public AsyncImageRenderer renderer;
     public boolean settingSquareSelection = true;
     public boolean settingCompensateAspectRatio = true;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
+
+    public ViewPort getViewPort() {
+        return myViewPort;
+    }
+
     private ViewPort myViewPort = new ViewPort(-2.0, 2.0, 2.0, -2.0);
     private ImageCtx bestImage = null;
     private boolean wantRedraw = true;
