@@ -10,9 +10,11 @@ import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 public class MandelbrotFractal implements AsyncImageViewer.AsyncImageRenderer {
-    MultithreadedExecutor threadPool = new MultithreadedExecutorPool(Runtime.getRuntime().availableProcessors());
+    private final MultithreadedExecutor threadPool = new MultithreadedExecutorPool(Runtime.getRuntime().availableProcessors());
 
     @Override
+    // FIXME: use a future here
+    // FIXME: ordering constraints
     public void render(ViewPort viewPort, int width, int height, Consumer<BufferedImage> then) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         threadPool.submit("mandelbrot-0", (threadI, threadN) -> {

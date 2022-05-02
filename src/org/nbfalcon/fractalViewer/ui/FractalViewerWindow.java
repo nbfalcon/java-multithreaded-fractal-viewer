@@ -1,12 +1,11 @@
 package org.nbfalcon.fractalViewer.ui;
 
 import org.nbfalcon.fractalViewer.fractals.MandelbrotFractal;
-import org.nbfalcon.fractalViewer.ui.components.ImageIOFileChooser;
+import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -16,7 +15,7 @@ import java.io.IOException;
 
 public class FractalViewerWindow extends JFrame {
     private final AsyncImageViewer myViewer;
-    private final ImageIOFileChooser saveImageChooser = new ImageIOFileChooser();
+    private final ImageExportChooser saveImageChooser = new ImageExportChooser();
 
     public FractalViewerWindow() {
         super("Fractal Viewer - Mandelbrot");
@@ -25,33 +24,6 @@ public class FractalViewerWindow extends JFrame {
         myViewer = new AsyncImageViewer(new MandelbrotFractal());
         add(myViewer);
         setJMenuBar(createMenu());
-    }
-
-    private static class FileChooserAccessory extends JPanel {
-        private final JSpinner widthInput = new JSpinner();
-        private final JSpinner heightInput = new JSpinner();
-
-        public int getWidth() {
-            return (int) widthInput.getValue();
-        }
-
-        public int getHeight() {
-            return (int) heightInput.getValue();
-        }
-
-        public FileChooserAccessory() {
-            // Apparently, PNG size is 4bytes -> theoretically max value
-            widthInput.setModel(new SpinnerNumberModel(1920, 1, Integer.MAX_VALUE, 160));
-            heightInput.setModel(new SpinnerNumberModel(1080, 1, Integer.MAX_VALUE, 160));
-            widthInput.setToolTipText("Width of the image");
-            heightInput.setToolTipText("Height of the image");
-
-            setLayout(new FlowLayout());
-            add(new JLabel("Resolution:"));
-            add(widthInput);
-            add(new JLabel("x"));
-            add(heightInput);
-        }
     }
 
     private FractalViewerWindow copyWin() {
@@ -78,7 +50,6 @@ public class FractalViewerWindow extends JFrame {
         JMenuItem saveAsImageAction = new JMenuItem(new AbstractAction("Save Fractal as Image") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                saveImageChooser.setDialogTitle("Save Fractal as Image...");
                 int result = saveImageChooser.showSaveDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String format = saveImageChooser.getImageIOFormat();
@@ -91,14 +62,21 @@ public class FractalViewerWindow extends JFrame {
 
                     final File finalSaveTo = saveTo;
                     final String finalFormat = format;
-                    myViewer.renderer.render(myViewer.getViewPort().copy(), 1920, 1080, (image) -> {
-                        try {
-                            ImageIO.write(image, finalFormat, finalSaveTo);
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(FractalViewerWindow.this,
-                                    "Failed to write image: " + e.getLocalizedMessage());
-                        }
-                    });
+                    myViewer.renderer.render(myViewer.getViewPort().copy(),
+                            saveImageChooser.exportSettingsAccessory.getWidth(),
+                            saveImageChooser.exportSettingsAccessory.getHeight(), (image) -> {
+                                try {
+                                    ImageIO.write(image, finalFormat, finalSaveTo);
+                                } catch (IOException e) {
+                                    JOptionPane.showMessageDialog(FractalViewerWindow.this,
+                                            "Failed to write image: " + e.getLocalizedMessage());
+                                }
+                            });
+
+                    // FIXME: this does not work for the main window; integrate with application architecture
+                    if (saveImageChooser.exportSettingsAccessory.closeAfterSaving()) {
+                        FractalViewerWindow.this.dispatchEvent(new WindowEvent(FractalViewerWindow.this, WindowEvent.WINDOW_CLOSING));
+                    }
                 }
             }
         });
