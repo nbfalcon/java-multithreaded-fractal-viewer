@@ -6,24 +6,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.security.Key;
 import java.util.function.Consumer;
 
 public class AsyncImageViewer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
+    private final AbstractAction cancelSelectionAction;
     public AsyncImageRenderer renderer;
     public boolean settingSquareSelection = true;
     public boolean settingCompensateAspectRatio = true;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
-
-    public ViewPort getViewPort() {
-        return myViewPort;
-    }
-
     private ViewPort myViewPort = new ViewPort(-2.0, 2.0, 2.0, -2.0);
     private ImageCtx bestImage = null;
     private boolean wantRedraw = true;
-
     public AsyncImageViewer(AsyncImageRenderer renderer) {
         super();
 
@@ -49,7 +45,20 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
                 setViewPort(myViewPort.zoomOut(2.0));
             }
         });
+        cancelSelectionAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                havePressedSelection = false;
+                if (haveSelection) {
+                    haveSelection = false;
+                    repaint();
+                }
+            }
+        };
+        cancelSelectionAction.setEnabled(false);
+        getActionMap().put("_cancelSelection", cancelSelectionAction);
 
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "_cancelSelection");
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "arrowUp");
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "arrowDown");
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "arrowLeft");
@@ -60,11 +69,21 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "zoomOut-");
     }
 
+    public ViewPort getViewPort() {
+        return myViewPort;
+    }
+
+    private void setViewPort(ViewPort myViewPort) {
+        this.myViewPort = myViewPort;
+        wantRedraw = true;
+        repaint();
+    }
+
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
         if (havePressedSelection) {
             double x = getX(mouseEvent), y = getY(mouseEvent);
-            if (settingSquareSelection) {
+            if (settingSquareSelection || (mouseEvent.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0) {
                 double dx = x - selection.x1, dy = y - selection.y1;
                 double deltaMax = Math.max(Math.abs(dx), Math.abs(dy));
                 double dxM = dx < 0 ? -deltaMax : deltaMax;
@@ -104,10 +123,12 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
-        if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
+        if ((mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
             havePressedSelection = true;
             selection.x1 = getX(mouseEvent);
             selection.y1 = getY(mouseEvent);
+
+            cancelSelectionAction.setEnabled(true);
         }
     }
 
@@ -120,8 +141,9 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         havePressedSelection = false;
         if (haveSelection) {
             haveSelection = false;
-
             setViewPort(myViewPort.slice(selection.sort()));
+
+            cancelSelectionAction.setEnabled(false);
         }
     }
 
@@ -131,12 +153,6 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
-    }
-
-    private void setViewPort(ViewPort myViewPort) {
-        this.myViewPort = myViewPort;
-        wantRedraw = true;
-        repaint();
     }
 
     @Override
@@ -170,13 +186,11 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
 
     private void redrawAsync() {
         ViewPort viewPort;
-        if (getHeight() == getWidth()) {
+        if (!settingCompensateAspectRatio || getHeight() == getWidth()) {
             viewPort = myViewPort.copy();
-        }
-        else if (getHeight() > getWidth()) {
+        } else if (getHeight() > getWidth()) {
             viewPort = myViewPort.strechY((double) getHeight() / getWidth());
-        }
-        else /* if getWidth() > getHeight() */ {
+        } else /* if getWidth() > getHeight() */ {
             viewPort = myViewPort.strechX((double) getWidth() / getHeight());
         }
         renderer.render(viewPort, getWidth(), getHeight(), (image) -> SwingUtilities.invokeLater(() -> {

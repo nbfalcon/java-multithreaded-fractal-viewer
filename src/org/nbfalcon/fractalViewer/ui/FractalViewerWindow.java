@@ -6,6 +6,7 @@ import org.nbfalcon.fractalViewer.util.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -24,6 +25,33 @@ public class FractalViewerWindow extends JFrame {
         myViewer = new AsyncImageViewer(new MandelbrotFractal());
         add(myViewer);
         setJMenuBar(createMenu());
+    }
+
+    private static class FileChooserAccessory extends JPanel {
+        private final JSpinner widthInput = new JSpinner();
+        private final JSpinner heightInput = new JSpinner();
+
+        public int getWidth() {
+            return (int) widthInput.getValue();
+        }
+
+        public int getHeight() {
+            return (int) heightInput.getValue();
+        }
+
+        public FileChooserAccessory() {
+            // Apparently, PNG size is 4bytes -> theoretically max value
+            widthInput.setModel(new SpinnerNumberModel(1920, 1, Integer.MAX_VALUE, 160));
+            heightInput.setModel(new SpinnerNumberModel(1080, 1, Integer.MAX_VALUE, 160));
+            widthInput.setToolTipText("Width of the image");
+            heightInput.setToolTipText("Height of the image");
+
+            setLayout(new FlowLayout());
+            add(new JLabel("Resolution:"));
+            add(widthInput);
+            add(new JLabel("x"));
+            add(heightInput);
+        }
     }
 
     private FractalViewerWindow copyWin() {
@@ -74,7 +102,7 @@ public class FractalViewerWindow extends JFrame {
                 }
             }
         });
-        saveAsImageAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK));
+        saveAsImageAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         file.add(saveAsImageAction);
         JMenuItem quitAction = new JMenuItem(new AbstractAction("Quit") {
             @Override
