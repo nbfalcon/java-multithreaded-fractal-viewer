@@ -14,6 +14,14 @@ public class ViewPort {
         this.y2 = y2;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ViewPort viewPort = (ViewPort) o;
+        return viewPort.x1 == x1 && viewPort.y1 == y1 && viewPort.x2 == x2 && viewPort.y2 == y2;
+    }
+
 //    public boolean equals(ViewPort other) {
 //        return feq(x1, other.x1) && feq(x2, other.x2) && feq(y1, other.y1) && feq(y2, other.y2);
 //    }
@@ -64,12 +72,12 @@ public class ViewPort {
         return new ViewPort(x1 + dnw, y1 + dnh, x2 - dnw, y2 - dnh);
     }
 
-    public ViewPort strechX(double sx) {
+    public ViewPort stretchX(double sx) {
         double dnw = getWidth() * (sx - 1.0) / 2;
         return new ViewPort(x1 - dnw, y1, x2 + dnw, y2);
     }
 
-    public ViewPort strechY(double sy) {
+    public ViewPort stretchY(double sy) {
         double dnh = getHeight() * (sy - 1.0) / 2;
         return new ViewPort(x1, y1 - dnh, x2, y2 + dnh);
     }

@@ -3,8 +3,9 @@ package org.nbfalcon.fractalViewer.fractals;
 import org.nbfalcon.fractalViewer.ui.AsyncImageViewer;
 import org.nbfalcon.fractalViewer.ui.ViewPort;
 import org.nbfalcon.fractalViewer.util.Complex;
-import org.nbfalcon.fractalViewer.util.MultithreadedExecutor;
-import org.nbfalcon.fractalViewer.util.MultithreadedExecutorPool;
+import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutor;
+import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutorPool;
+import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
@@ -21,9 +22,9 @@ public abstract class FractalBase implements AsyncImageViewer.AsyncImageRenderer
         return i;
     }
 
-    protected void render1(final FractalPixelCalc how, ViewPort viewPort, int width, int height, Consumer<BufferedImage> then) {
+    protected SimplePromise<BufferedImage> render1(ViewPort viewPort, int width, int height, final FractalPixelCalc how) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        threadPool.submit("mandelbrot-0", (threadI, threadN) -> {
+        return threadPool.submit((threadI, threadN) -> {
             // FIXME: false sharing mitigation (64bytes / 4bytes per pixel * 16 (just in case there is a very large cache line on sth. like PowerPC))
             Complex c0 = new Complex(viewPort.x1, viewPort.y1);
             double w = viewPort.getWidth() / width, h = viewPort.getHeight() / height;
@@ -33,7 +34,7 @@ public abstract class FractalBase implements AsyncImageViewer.AsyncImageRenderer
                     image.getRaster().setPixel(x, y, new int[]{nIters, nIters, nIters});
                 }
             }
-        }, () -> then.accept(image));
+        }).map(ignored -> image);
     }
 
     @FunctionalInterface

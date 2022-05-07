@@ -1,13 +1,12 @@
 package org.nbfalcon.fractalViewer.ui;
 
 import org.nbfalcon.fractalViewer.util.MouseEventX;
+import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.security.Key;
-import java.util.function.Consumer;
 
 public class AsyncImageViewer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
@@ -18,8 +17,11 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
     private ViewPort myViewPort = new ViewPort(-2.0, 2.0, 2.0, -2.0);
+
+    private SimplePromise<Void> cancel = null;
     private ImageCtx bestImage = null;
-    private boolean wantRedraw = true;
+    private int lastUpdateWidth = -2, lastUpdateHeight = -2;
+
     public AsyncImageViewer(AsyncImageRenderer renderer) {
         super();
 
@@ -28,6 +30,21 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // Don't do 2 redraws if the size hasn't really changed
+                if (lastUpdateWidth != getWidth() || lastUpdateHeight != getHeight()) {
+                    redrawAsync();
+                }
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                // This isn't called for some reason. Instead, we get two componentResized() events.
+                redrawAsync();
+            }
+        });
 
         getActionMap().put("arrowUp", new ShiftAction(0.0, -0.1));
         getActionMap().put("arrowDown", new ShiftAction(0.0, +0.1));
@@ -75,8 +92,7 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
 
     private void setViewPort(ViewPort myViewPort) {
         this.myViewPort = myViewPort;
-        wantRedraw = true;
-        repaint();
+        redrawAsync();
     }
 
     @Override
@@ -159,11 +175,6 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (wantRedraw || (bestImage != null && (bestImage.image.getWidth() != getWidth() || bestImage.image.getHeight() != getHeight()))) {
-            redrawAsync();
-            wantRedraw = false;
-        }
-
         if (bestImage != null) {
 //            ViewPort imViewPortR = bestImage.viewPort.relativeTo(myViewPort);
             g.drawImage(bestImage.image, 0, 0, null);
@@ -185,16 +196,33 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     }
 
     private void redrawAsync() {
+        // 1. Do we even have to update?
+        // Not visible?
+        if (getWidth() <= 0 || getHeight() <= 0 || !isShowing()) return;
+
+        // 2. ViewPort with correct aspect ratio
         ViewPort viewPort;
         if (!settingCompensateAspectRatio || getHeight() == getWidth()) {
             viewPort = myViewPort.copy();
         } else if (getHeight() > getWidth()) {
-            viewPort = myViewPort.strechY((double) getHeight() / getWidth());
+            viewPort = myViewPort.stretchY((double) getHeight() / getWidth());
         } else /* if getWidth() > getHeight() */ {
-            viewPort = myViewPort.strechX((double) getWidth() / getHeight());
+            viewPort = myViewPort.stretchX((double) getWidth() / getHeight());
         }
-        renderer.render(viewPort, getWidth(), getHeight(), (image) -> SwingUtilities.invokeLater(() -> {
+
+        lastUpdateHeight = getHeight();
+        lastUpdateWidth = getWidth();
+
+        // 3. Queue update
+        // FIXME: there are no ordering constraints here, but this works since currently
+        //  the MultithreadedExecutorPool always runs tasks in the correct order
+        if (cancel != null) {
+            cancel.cancel();
+            cancel = null;
+        }
+        renderer.render(viewPort, getWidth(), getHeight()).then((image) -> SwingUtilities.invokeLater(() -> {
             bestImage = new ImageCtx(viewPort, image);
+            cancel = null;
             repaint();
         }));
     }
@@ -209,7 +237,7 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     }
 
     public interface AsyncImageRenderer {
-        void render(ViewPort viewPort, int width, int height, Consumer<BufferedImage> then);
+        SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height);
     }
 
     private static class ImageCtx {

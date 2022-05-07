@@ -6,6 +6,7 @@ import org.nbfalcon.fractalViewer.util.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -19,11 +20,13 @@ public class FractalViewerWindow extends JFrame {
 
     public FractalViewerWindow() {
         super("Fractal Viewer - Mandelbrot");
-        setSize(800, 800);
 
-        myViewer = new AsyncImageViewer(new MandelbrotFractal());
-        add(myViewer);
         setJMenuBar(createMenu());
+        myViewer = new AsyncImageViewer(new MandelbrotFractal());
+        myViewer.setPreferredSize(new Dimension(800, 800));
+        add(myViewer);
+
+        pack();
     }
 
     private FractalViewerWindow copyWin() {
@@ -64,14 +67,14 @@ public class FractalViewerWindow extends JFrame {
                     final String finalFormat = format;
                     myViewer.renderer.render(myViewer.getViewPort().copy(),
                             saveImageChooser.exportSettingsAccessory.getWidth(),
-                            saveImageChooser.exportSettingsAccessory.getHeight(), (image) -> {
-                                try {
-                                    ImageIO.write(image, finalFormat, finalSaveTo);
-                                } catch (IOException e) {
-                                    JOptionPane.showMessageDialog(FractalViewerWindow.this,
-                                            "Failed to write image: " + e.getLocalizedMessage());
-                                }
-                            });
+                            saveImageChooser.exportSettingsAccessory.getHeight()).then((image) -> {
+                        try {
+                            ImageIO.write(image, finalFormat, finalSaveTo);
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(FractalViewerWindow.this,
+                                    "Failed to write image: " + e.getLocalizedMessage());
+                        }
+                    });
 
                     // FIXME: this does not work for the main window; integrate with application architecture
                     if (saveImageChooser.exportSettingsAccessory.closeAfterSaving()) {

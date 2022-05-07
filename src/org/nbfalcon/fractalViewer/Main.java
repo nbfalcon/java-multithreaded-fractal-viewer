@@ -1,15 +1,15 @@
 package org.nbfalcon.fractalViewer;
 
-import org.nbfalcon.fractalViewer.fractals.MandelbrotFractal;
-import org.nbfalcon.fractalViewer.ui.AsyncImageViewer;
 import org.nbfalcon.fractalViewer.ui.FractalViewerWindow;
 
 import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        FractalViewerWindow window = new FractalViewerWindow();
-        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        window.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            FractalViewerWindow window = new FractalViewerWindow();
+            window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            window.setVisible(true);
+        });
     }
 }
