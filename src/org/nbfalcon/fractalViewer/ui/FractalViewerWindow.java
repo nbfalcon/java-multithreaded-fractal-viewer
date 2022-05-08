@@ -1,5 +1,6 @@
 package org.nbfalcon.fractalViewer.ui;
 
+import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
 import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
@@ -79,7 +80,9 @@ public class FractalViewerWindow extends JFrame {
 
                     final File finalSaveTo = saveTo;
                     final String finalFormat = format;
-                    myViewer.renderer.render(myViewer.getViewPort(),
+                    FractalRenderer renderer = (FractalRenderer) myViewer.renderer;
+                    renderer.renderWithCustomPool(application.getExportPool(),
+                            myViewer.getViewPort(),
                             saveImageChooser.exportSettingsAccessory.getWidth(),
                             saveImageChooser.exportSettingsAccessory.getHeight()).then((image) -> {
                         try {

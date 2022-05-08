@@ -4,14 +4,16 @@ import org.nbfalcon.fractalViewer.ui.AsyncImageViewer;
 import org.nbfalcon.fractalViewer.ui.ViewPort;
 import org.nbfalcon.fractalViewer.util.Complex;
 import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutor;
-import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutorPool;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import java.awt.image.BufferedImage;
 
-public abstract class FractalBase implements AsyncImageViewer.AsyncImageRenderer {
-    // FIXME: this will later be injected somehow; currently this is preventing shutdown on closing all windows
-    public MultithreadedExecutor threadPool = new MultithreadedExecutorPool(Runtime.getRuntime().availableProcessors());
+public abstract class FractalBase implements FractalRenderer {
+    public final MultithreadedExecutor threadPool;
+
+    protected FractalBase(MultithreadedExecutor threadPool) {
+        this.threadPool = threadPool;
+    }
 
     public static int calcIterations(Complex c, Complex z, int maxIter) {
         int i;
@@ -21,9 +23,14 @@ public abstract class FractalBase implements AsyncImageViewer.AsyncImageRenderer
         return i;
     }
 
-    protected SimplePromise<BufferedImage> render1(ViewPort viewPort, int width, int height, final FractalPixelCalc how) {
+    @Override
+    public SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height) {
+        return renderWithCustomPool(threadPool, viewPort, width, height);
+    }
+
+    public static SimplePromise<BufferedImage> renderWithCustomPool1(MultithreadedExecutor pool, ViewPort viewPort, int width, int height, final FractalPixelCalc how) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        return threadPool.submit((threadI, threadN) -> {
+        return pool.submit((threadI, threadN) -> {
             // FIXME: false sharing mitigation (64bytes / 4bytes per pixel * 16 (just in case there is a very large cache line on sth. like PowerPC))
             Complex c0 = new Complex(viewPort.x1, viewPort.y1);
             double w = viewPort.getWidth() / width, h = viewPort.getHeight() / height;

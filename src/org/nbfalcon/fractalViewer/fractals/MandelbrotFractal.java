@@ -2,13 +2,18 @@ package org.nbfalcon.fractalViewer.fractals;
 
 import org.nbfalcon.fractalViewer.ui.ViewPort;
 import org.nbfalcon.fractalViewer.util.Complex;
+import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutor;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import java.awt.image.BufferedImage;
 
 public class MandelbrotFractal extends FractalBase {
+    public MandelbrotFractal(MultithreadedExecutor threadPool) {
+        super(threadPool);
+    }
+
     @Override
-    public SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height) {
-        return render1(viewPort, width, height, (xy, maxIter) -> calcIterations(xy, Complex.ZERO, maxIter));
+    public SimplePromise<BufferedImage> renderWithCustomPool(MultithreadedExecutor pool, ViewPort viewPort, int width, int height) {
+        return renderWithCustomPool1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(xy, Complex.ZERO, maxIter));
     }
 }
