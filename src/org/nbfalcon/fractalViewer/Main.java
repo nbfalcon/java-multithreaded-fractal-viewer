@@ -5,12 +5,13 @@ import org.nbfalcon.fractalViewer.app.FractalViewerApplication;
 import javax.swing.*;
 
 // FIXME: logging
-// FIXME: incrementally recompute fractals while scrolling
+// FIXME: incrementally recompute fractals while scrolling (option)
+// FIXME: incrementally blit fractals (scale the image) (option)
 // FIXME: coalesce scroll events
 // FIXME: inject threadpool into fractals
 // FIXME: more fractals: fractal selection
 // FIXME: palettes
-// FIXME: iteration count
+// FIXME: iteration count, xy coord
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         FractalViewerApplication app = new FractalViewerApplication();

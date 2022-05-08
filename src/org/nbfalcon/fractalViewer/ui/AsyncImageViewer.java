@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class AsyncImageViewer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class AsyncImageViewer extends JPanel {
     /**
      * The default viewport used by new image viewers.
      */
@@ -40,9 +40,76 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         this.settingCompensateAspectRatio = settingCompensateAspectRatio;
         this.curViewPort = viewPort;
 
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addMouseWheelListener(this);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == 0) {
+                    if (mouseEvent.getButton() == MouseEvent.BUTTON1 || mouseEvent.getButton() == MouseEvent.BUTTON3) {
+                        ViewPort shifted = curViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
+
+                        double ZOOM_SCALE = 2;
+                        ViewPort scaled = mouseEvent.getButton() == MouseEvent.BUTTON1 ? shifted.zoomIn(ZOOM_SCALE) : shifted.zoomOut(ZOOM_SCALE);
+
+                        setViewPort(scaled);
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                if ((mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
+                    havePressedSelection = true;
+                    selection.x1 = getX(mouseEvent);
+                    selection.y1 = getY(mouseEvent);
+
+                    cancelSelectionAction.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+                havePressedSelection = false;
+                if (haveSelection) {
+                    haveSelection = false;
+                    setViewPort(curViewPort.slice(selection.sort()));
+
+                    cancelSelectionAction.setEnabled(false);
+                }
+            }
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent mouseEvent) {
+                if (havePressedSelection) {
+                    double x = getX(mouseEvent), y = getY(mouseEvent);
+                    if (settingSquareSelection || (mouseEvent.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0) {
+                        double dx = x - selection.x1, dy = y - selection.y1;
+                        double deltaMax = Math.max(Math.abs(dx), Math.abs(dy));
+                        double dxM = dx < 0 ? -deltaMax : deltaMax;
+                        double dyM = dy < 0 ? -deltaMax : deltaMax;
+                        selection.x2 = selection.x1 + dxM;
+                        selection.y2 = selection.y1 + dyM;
+                    } else {
+                        selection.x2 = x;
+                        selection.y2 = y;
+                    }
+                    haveSelection = true;
+                    repaint();
+                }
+            }
+        });
+        //noinspection Convert2Lambda
+        addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
+                if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) != 0) {
+                    setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
+                } else {
+                    setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
+                }
+            }
+        });
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -132,80 +199,12 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         redrawAsync();
     }
 
-    @Override
-    public void mouseDragged(MouseEvent mouseEvent) {
-        if (havePressedSelection) {
-            double x = getX(mouseEvent), y = getY(mouseEvent);
-            if (settingSquareSelection || (mouseEvent.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0) {
-                double dx = x - selection.x1, dy = y - selection.y1;
-                double deltaMax = Math.max(Math.abs(dx), Math.abs(dy));
-                double dxM = dx < 0 ? -deltaMax : deltaMax;
-                double dyM = dy < 0 ? -deltaMax : deltaMax;
-                selection.x2 = selection.x1 + dxM;
-                selection.y2 = selection.y1 + dyM;
-            } else {
-                selection.x2 = x;
-                selection.y2 = y;
-            }
-            haveSelection = true;
-            repaint();
-        }
-    }
-
     private double getX(MouseEvent mouseEvent) {
         return (double) mouseEvent.getX() / getWidth();
     }
 
-    @Override
-    public void mouseMoved(MouseEvent mouseEvent) {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
-        if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == 0) {
-            if (mouseEvent.getButton() == MouseEvent.BUTTON1 || mouseEvent.getButton() == MouseEvent.BUTTON3) {
-                ViewPort shifted = curViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
-
-                double ZOOM_SCALE = 2;
-                ViewPort scaled = mouseEvent.getButton() == MouseEvent.BUTTON1 ? shifted.zoomIn(ZOOM_SCALE) : shifted.zoomOut(ZOOM_SCALE);
-
-                setViewPort(scaled);
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent mouseEvent) {
-        if ((mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
-            havePressedSelection = true;
-            selection.x1 = getX(mouseEvent);
-            selection.y1 = getY(mouseEvent);
-
-            cancelSelectionAction.setEnabled(true);
-        }
-    }
-
     private double getY(MouseEvent mouseEvent) {
         return (double) mouseEvent.getY() / getHeight();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent) {
-        havePressedSelection = false;
-        if (haveSelection) {
-            haveSelection = false;
-            setViewPort(curViewPort.slice(selection.sort()));
-
-            cancelSelectionAction.setEnabled(false);
-        }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent) {
     }
 
     @Override
@@ -267,15 +266,6 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
             cancel = null;
             repaint();
         }));
-    }
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
-        if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) != 0) {
-            setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
-        } else {
-            setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
-        }
     }
 
     public interface AsyncImageRenderer {
