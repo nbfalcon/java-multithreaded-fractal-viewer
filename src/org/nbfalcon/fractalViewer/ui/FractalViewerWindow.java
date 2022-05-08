@@ -26,6 +26,14 @@ public class FractalViewerWindow extends JFrame {
         // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
         this.myViewer = viewer;
         this.application = application;
+
+        myViewer.createNewWindowWithViewportUserAction = (sliced) -> {
+            FractalViewerWindow newWindow = copyWin();
+            newWindow.myViewer.setViewPort(sliced);
+            application.registerWindow(newWindow, true);
+            newWindow.requestFocus(FocusEvent.Cause.ACTIVATION);
+        };
+
         setJMenuBar(createMenu());
         myViewer.setPreferredSize(new Dimension(800, 800));
         add(myViewer);
@@ -49,8 +57,8 @@ public class FractalViewerWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 FractalViewerWindow newWindow = copyWin();
-                newWindow.requestFocus(FocusEvent.Cause.ACTIVATION);
                 application.registerWindow(newWindow, true);
+                newWindow.requestFocus(FocusEvent.Cause.ACTIVATION);
             }
         });
         newWindowAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));

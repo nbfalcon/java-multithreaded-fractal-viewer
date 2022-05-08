@@ -1,36 +1,32 @@
 package org.nbfalcon.fractalViewer.ui;
 
-import org.nbfalcon.fractalViewer.util.swing.MouseEventX;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
+import org.nbfalcon.fractalViewer.util.swing.MouseEventX;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
 public class AsyncImageViewer extends JPanel {
     /**
      * The default viewport used by new image viewers.
      */
     private static final ViewPort DEFAULT_VIEWPORT = new ViewPort(-2.0, 2.0, 2.0, -2.0);
-
-    public static ViewPort getDefaultViewport() {
-        return DEFAULT_VIEWPORT.copy();
-    }
-
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
+    private final AbstractAction cancelSelectionAction;
+    public AsyncImageRenderer renderer;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
-    private final AbstractAction cancelSelectionAction;
-
-    public AsyncImageRenderer renderer;
     private boolean settingSquareSelection;
     private boolean settingCompensateAspectRatio;
     private ViewPort curViewPort;
-
     private SimplePromise<Void> cancel = null;
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
+
+    public Consumer<ViewPort> createNewWindowWithViewportUserAction;
 
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
         super();
@@ -71,7 +67,17 @@ public class AsyncImageViewer extends JPanel {
                 havePressedSelection = false;
                 if (haveSelection) {
                     haveSelection = false;
-                    setViewPort(curViewPort.slice(selection.sort()));
+
+                    ViewPort selectionSlice = curViewPort.slice(selection.sort());
+                    if (mouseEvent.getButton() == MouseEvent.BUTTON3) {
+                        if (createNewWindowWithViewportUserAction != null) {
+                            createNewWindowWithViewportUserAction.accept(selectionSlice);
+                        }
+                        repaint();
+                    }
+                    else {
+                        setViewPort(selectionSlice);
+                    }
 
                     cancelSelectionAction.setEnabled(false);
                 }
@@ -167,7 +173,11 @@ public class AsyncImageViewer extends JPanel {
     }
 
     public AsyncImageViewer(AsyncImageRenderer renderer) {
-        this(renderer, true, true, getDefaultViewport());
+        this(renderer, false, true, getDefaultViewport());
+    }
+
+    public static ViewPort getDefaultViewport() {
+        return DEFAULT_VIEWPORT.copy();
     }
 
     public boolean getSettingSquareSelection() {
@@ -268,6 +278,13 @@ public class AsyncImageViewer extends JPanel {
         }));
     }
 
+    /**
+     * @return A copy of this image viewer, with the same settings and renderer.
+     */
+    public AsyncImageViewer copy() {
+        return new AsyncImageViewer(renderer.copy(), getSettingSquareSelection(), getSettingCompensateAspectRatio(), getViewPort());
+    }
+
     public interface AsyncImageRenderer {
         SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height);
 
@@ -300,12 +317,5 @@ public class AsyncImageViewer extends JPanel {
         public void actionPerformed(ActionEvent actionEvent) {
             setViewPort(curViewPort.shift(dx, dy));
         }
-    }
-
-    /**
-     * @return A copy of this image viewer, with the same settings and renderer.
-     */
-    public AsyncImageViewer copy() {
-        return new AsyncImageViewer(renderer.copy(), getSettingSquareSelection(), getSettingCompensateAspectRatio(), getViewPort());
     }
 }

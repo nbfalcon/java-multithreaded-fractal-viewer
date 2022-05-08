@@ -12,6 +12,7 @@ import javax.swing.*;
 // FIXME: more fractals: fractal selection
 // FIXME: palettes
 // FIXME: iteration count, xy coord
+// FIXME: live zooming
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         FractalViewerApplication app = new FractalViewerApplication();
