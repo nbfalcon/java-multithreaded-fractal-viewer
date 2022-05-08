@@ -46,4 +46,8 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
             cancelAll.forEach(f -> f.cancel(true));
         }
     }
+
+    public ExecutorService getExecutorService() {
+        return myExecutorService;
+    }
 }

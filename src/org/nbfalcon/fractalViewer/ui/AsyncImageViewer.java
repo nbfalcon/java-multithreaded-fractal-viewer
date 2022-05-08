@@ -1,6 +1,6 @@
 package org.nbfalcon.fractalViewer.ui;
 
-import org.nbfalcon.fractalViewer.util.ui.MouseEventX;
+import org.nbfalcon.fractalViewer.util.swing.MouseEventX;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import javax.swing.*;

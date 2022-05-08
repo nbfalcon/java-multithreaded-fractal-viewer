@@ -1,9 +1,8 @@
 package org.nbfalcon.fractalViewer.ui;
 
-import org.nbfalcon.fractalViewer.fractals.MandelbrotFractal;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
-import org.nbfalcon.fractalViewer.util.ui.SwingUtilitiesX;
+import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,19 +10,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
 public class FractalViewerWindow extends JFrame {
     private final AsyncImageViewer myViewer;
-    private final ImageExportChooser saveImageChooser = new ImageExportChooser();
+    private final FractalViewerApplicationContext application;
 
-    public FractalViewerWindow(AsyncImageViewer viewer) {
+    public FractalViewerWindow(AsyncImageViewer viewer, FractalViewerApplicationContext application) {
         super("Fractal Viewer - Mandelbrot");
 
+        // We need WindowClosed to be dispatched
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
         // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
-        myViewer = viewer;
+        this.myViewer = viewer;
+        this.application = application;
         setJMenuBar(createMenu());
         myViewer.setPreferredSize(new Dimension(800, 800));
         add(myViewer);
@@ -32,7 +34,7 @@ public class FractalViewerWindow extends JFrame {
     }
 
     private FractalViewerWindow copyWin() {
-        FractalViewerWindow window = new FractalViewerWindow(myViewer.copy());
+        FractalViewerWindow window = new FractalViewerWindow(myViewer.copy(), application);
 
         window.setSize(getSize());
         return window;
@@ -48,7 +50,7 @@ public class FractalViewerWindow extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 FractalViewerWindow newWindow = copyWin();
                 newWindow.requestFocus(FocusEvent.Cause.ACTIVATION);
-                newWindow.setVisible(true);
+                application.registerWindow(newWindow, true);
             }
         });
         newWindowAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
@@ -56,6 +58,7 @@ public class FractalViewerWindow extends JFrame {
         JMenuItem saveAsImageAction = new JMenuItem(new AbstractAction("Save Fractal as Image") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                ImageExportChooser saveImageChooser = application.getExportChooser();
                 int result = saveImageChooser.showSaveDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String format = saveImageChooser.getImageIOFormat();
@@ -79,20 +82,29 @@ public class FractalViewerWindow extends JFrame {
                         }
                     });
 
-                    // FIXME: this does not work for the main window; integrate with application architecture
                     if (saveImageChooser.exportSettingsAccessory.closeAfterSaving()) {
-                        FractalViewerWindow.this.dispatchEvent(new WindowEvent(FractalViewerWindow.this, WindowEvent.WINDOW_CLOSING));
+                        SwingUtilitiesX.closeWindow(FractalViewerWindow.this);
                     }
                 }
             }
         });
         saveAsImageAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         file.add(saveAsImageAction);
+        JMenuItem closeWindow = new JMenuItem(new AbstractAction("Close Window") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                SwingUtilitiesX.closeWindow(FractalViewerWindow.this);
+            }
+        });
+        file.add(closeWindow);
         JMenuItem quitAction = new JMenuItem(new AbstractAction("Quit") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                // FIXME: manage multiple windows
-                FractalViewerWindow.this.dispatchEvent(new WindowEvent(FractalViewerWindow.this, WindowEvent.WINDOW_CLOSING));
+                int result = JOptionPane.showConfirmDialog(FractalViewerWindow.this,
+                        "Close all Windows and Quit?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    application.shutdownApplication();
+                }
             }
         });
         quitAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));

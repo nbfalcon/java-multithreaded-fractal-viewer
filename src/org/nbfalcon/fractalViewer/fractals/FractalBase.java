@@ -8,10 +8,9 @@ import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutorPool;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import java.awt.image.BufferedImage;
-import java.util.function.Consumer;
 
 public abstract class FractalBase implements AsyncImageViewer.AsyncImageRenderer {
-    // FIXME: this will later be injected somehow
+    // FIXME: this will later be injected somehow; currently this is preventing shutdown on closing all windows
     public MultithreadedExecutor threadPool = new MultithreadedExecutorPool(Runtime.getRuntime().availableProcessors());
 
     public static int calcIterations(Complex c, Complex z, int maxIter) {

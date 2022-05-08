@@ -1,6 +1,7 @@
-package org.nbfalcon.fractalViewer.util.ui;
+package org.nbfalcon.fractalViewer.util.swing;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
@@ -12,5 +13,9 @@ public class SwingUtilitiesX {
             e.printStackTrace();
         }
         menuItem.addChangeListener(change -> setter.accept(menuItem.getState()));
+    }
+
+    public static void closeWindow(JFrame window) {
+        window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
     }
 }
