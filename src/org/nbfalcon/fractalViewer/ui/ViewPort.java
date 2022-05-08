@@ -82,6 +82,16 @@ public class ViewPort {
         return new ViewPort(x1, y1 - dnh, x2, y2 + dnh);
     }
 
+    public ViewPort setWidth(double newWidth) {
+        double dw = newWidth - getWidth();
+        return new ViewPort(x1 - dw / 2, y1, x2 + dw / 2, y2 / 2);
+    }
+
+    public ViewPort setHeight(double newHeight) {
+        double dh = newHeight - getHeight();
+        return new ViewPort(x1, y1 - dh / 2, x2, y2 + dh / 2);
+    }
+
 //    private static boolean feq(double a, double b) {
 //        return Math.abs(a - b) < 0.0001;
 //    }

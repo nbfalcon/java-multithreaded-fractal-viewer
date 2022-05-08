@@ -3,6 +3,7 @@ package org.nbfalcon.fractalViewer.ui;
 import org.nbfalcon.fractalViewer.fractals.MandelbrotFractal;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
+import org.nbfalcon.fractalViewer.util.ui.SwingUtilitiesX;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,8 +22,9 @@ public class FractalViewerWindow extends JFrame {
     public FractalViewerWindow() {
         super("Fractal Viewer - Mandelbrot");
 
-        setJMenuBar(createMenu());
+        // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
         myViewer = new AsyncImageViewer(new MandelbrotFractal());
+        setJMenuBar(createMenu());
         myViewer.setPreferredSize(new Dimension(800, 800));
         add(myViewer);
 
@@ -31,6 +33,11 @@ public class FractalViewerWindow extends JFrame {
 
     private FractalViewerWindow copyWin() {
         FractalViewerWindow window = new FractalViewerWindow();
+
+        window.myViewer.renderer = myViewer.renderer;
+        // This won't cause a re-render, since the renderer isn't visible at this point
+        window.myViewer.setViewPort(myViewer.getViewPort());
+
         window.setSize(getSize());
         return window;
     }
@@ -65,7 +72,7 @@ public class FractalViewerWindow extends JFrame {
 
                     final File finalSaveTo = saveTo;
                     final String finalFormat = format;
-                    myViewer.renderer.render(myViewer.getViewPort().copy(),
+                    myViewer.renderer.render(myViewer.getViewPort(),
                             saveImageChooser.exportSettingsAccessory.getWidth(),
                             saveImageChooser.exportSettingsAccessory.getHeight()).then((image) -> {
                         try {
@@ -94,10 +101,45 @@ public class FractalViewerWindow extends JFrame {
         });
         quitAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
         file.add(quitAction);
+
         JMenu fractal = new JMenu("Fractal");
         fractal.setMnemonic(KeyEvent.VK_R);
+
         JMenu view = new JMenu("View");
         view.setMnemonic(KeyEvent.VK_V);
+        JMenuItem resetPerspective = new JMenuItem(new AbstractAction("Reset Perspective") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                myViewer.setViewPort(AsyncImageViewer.getDefaultViewport());
+            }
+        });
+        view.add(resetPerspective);
+        JMenuItem squarifyPerspective = new JMenuItem(new AbstractAction("Make View Square") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ViewPort vp = myViewer.getViewPort();
+
+                double width = vp.getWidth(), height = vp.getHeight();
+                if (width > height) //noinspection SuspiciousNameCombination
+                    vp = vp.setHeight(width);
+                else if (height > width) //noinspection SuspiciousNameCombination
+                    vp = vp.setWidth(height);
+                else {
+                    return;
+                }
+
+                myViewer.setViewPort(vp);
+            }
+        });
+        view.add(squarifyPerspective);
+        JCheckBoxMenuItem forceSquareSelection = new JCheckBoxMenuItem("Always use square selection");
+        SwingUtilitiesX.dataBind(forceSquareSelection,
+                myViewer::getSettingSquareSelection, myViewer::setSettingSquareSelection);
+        view.add(forceSquareSelection);
+        JCheckBoxMenuItem compensateAspectRatio = new JCheckBoxMenuItem("Compensate Aspect Ratio");
+        SwingUtilitiesX.dataBind(compensateAspectRatio,
+                myViewer::getSettingCompensateAspectRatio, myViewer::setSettingCompensateAspectRatio);
+        view.add(compensateAspectRatio);
 
         bar.add(file);
         bar.add(fractal);

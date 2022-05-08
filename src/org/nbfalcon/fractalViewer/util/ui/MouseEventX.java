@@ -1,4 +1,4 @@
-package org.nbfalcon.fractalViewer.util;
+package org.nbfalcon.fractalViewer.util.ui;
 
 import java.awt.event.MouseEvent;
 

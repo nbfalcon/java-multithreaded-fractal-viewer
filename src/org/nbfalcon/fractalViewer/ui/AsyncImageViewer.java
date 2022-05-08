@@ -1,6 +1,6 @@
 package org.nbfalcon.fractalViewer.ui;
 
-import org.nbfalcon.fractalViewer.util.MouseEventX;
+import org.nbfalcon.fractalViewer.util.ui.MouseEventX;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import javax.swing.*;
@@ -9,19 +9,26 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class AsyncImageViewer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+    /**
+     * The default viewport used by new image viewers.
+     */
+    private static final ViewPort DEFAULT_VIEWPORT = new ViewPort(-2.0, 2.0, 2.0, -2.0);
+
+    public static ViewPort getDefaultViewport() {
+        return DEFAULT_VIEWPORT.copy();
+    }
+
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
     private final AbstractAction cancelSelectionAction;
     public AsyncImageRenderer renderer;
-    public boolean settingSquareSelection = true;
-    public boolean settingCompensateAspectRatio = true;
+    private boolean settingSquareSelection = true;
+    private boolean settingCompensateAspectRatio = true;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
-    private ViewPort myViewPort = new ViewPort(-2.0, 2.0, 2.0, -2.0);
-
+    private ViewPort myViewPort = getDefaultViewport();
     private SimplePromise<Void> cancel = null;
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
-
     public AsyncImageViewer(AsyncImageRenderer renderer) {
         super();
 
@@ -86,11 +93,31 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "zoomOut-");
     }
 
-    public ViewPort getViewPort() {
-        return myViewPort;
+    public boolean getSettingSquareSelection() {
+        return settingSquareSelection;
     }
 
-    private void setViewPort(ViewPort myViewPort) {
+    public void setSettingSquareSelection(boolean settingSquareSelection) {
+        this.settingSquareSelection = settingSquareSelection;
+    }
+
+    public boolean getSettingCompensateAspectRatio() {
+        return settingCompensateAspectRatio;
+    }
+
+    public void setSettingCompensateAspectRatio(boolean settingCompensateAspectRatio) {
+        this.settingCompensateAspectRatio = settingCompensateAspectRatio;
+        // If getWidth() == getHeight(), there is no aspect ratio to compensate (1:1)
+        if (getWidth() != getHeight()) {
+            redrawAsync();
+        }
+    }
+
+    public ViewPort getViewPort() {
+        return myViewPort.copy();
+    }
+
+    public void setViewPort(ViewPort myViewPort) {
         this.myViewPort = myViewPort;
         redrawAsync();
     }
@@ -195,6 +222,11 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         }
     }
 
+    /**
+     * Queue a redraw immediately, cancelling the previous one.
+     * <p>
+     * Non-EDT-safe.
+     */
     private void redrawAsync() {
         // 1. Do we even have to update?
         // Not visible?
