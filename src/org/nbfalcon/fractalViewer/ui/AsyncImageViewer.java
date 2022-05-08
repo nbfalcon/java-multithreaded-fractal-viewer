@@ -19,20 +19,26 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     }
 
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
-    private final AbstractAction cancelSelectionAction;
-    public AsyncImageRenderer renderer;
-    private boolean settingSquareSelection = true;
-    private boolean settingCompensateAspectRatio = true;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
-    private ViewPort myViewPort = getDefaultViewport();
+    private final AbstractAction cancelSelectionAction;
+
+    public AsyncImageRenderer renderer;
+    private boolean settingSquareSelection;
+    private boolean settingCompensateAspectRatio;
+    private ViewPort curViewPort;
+
     private SimplePromise<Void> cancel = null;
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
-    public AsyncImageViewer(AsyncImageRenderer renderer) {
+
+    public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
         super();
 
         this.renderer = renderer;
+        this.settingSquareSelection = settingSquareSelection;
+        this.settingCompensateAspectRatio = settingCompensateAspectRatio;
+        this.curViewPort = viewPort;
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -60,13 +66,13 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         getActionMap().put("zoomIn+", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                setViewPort(myViewPort.zoomIn(2.0));
+                setViewPort(curViewPort.zoomIn(2.0));
             }
         });
         getActionMap().put("zoomOut-", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                setViewPort(myViewPort.zoomOut(2.0));
+                setViewPort(curViewPort.zoomOut(2.0));
             }
         });
         cancelSelectionAction = new AbstractAction() {
@@ -93,6 +99,10 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "zoomOut-");
     }
 
+    public AsyncImageViewer(AsyncImageRenderer renderer) {
+        this(renderer, true, true, getDefaultViewport());
+    }
+
     public boolean getSettingSquareSelection() {
         return settingSquareSelection;
     }
@@ -114,11 +124,11 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     }
 
     public ViewPort getViewPort() {
-        return myViewPort.copy();
+        return curViewPort.copy();
     }
 
     public void setViewPort(ViewPort myViewPort) {
-        this.myViewPort = myViewPort;
+        this.curViewPort = myViewPort;
         redrawAsync();
     }
 
@@ -154,7 +164,7 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     public void mouseClicked(MouseEvent mouseEvent) {
         if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == 0) {
             if (mouseEvent.getButton() == MouseEvent.BUTTON1 || mouseEvent.getButton() == MouseEvent.BUTTON3) {
-                ViewPort shifted = myViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
+                ViewPort shifted = curViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
 
                 double ZOOM_SCALE = 2;
                 ViewPort scaled = mouseEvent.getButton() == MouseEvent.BUTTON1 ? shifted.zoomIn(ZOOM_SCALE) : shifted.zoomOut(ZOOM_SCALE);
@@ -184,7 +194,7 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         havePressedSelection = false;
         if (haveSelection) {
             haveSelection = false;
-            setViewPort(myViewPort.slice(selection.sort()));
+            setViewPort(curViewPort.slice(selection.sort()));
 
             cancelSelectionAction.setEnabled(false);
         }
@@ -235,11 +245,11 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
         // 2. ViewPort with correct aspect ratio
         ViewPort viewPort;
         if (!settingCompensateAspectRatio || getHeight() == getWidth()) {
-            viewPort = myViewPort.copy();
+            viewPort = curViewPort.copy();
         } else if (getHeight() > getWidth()) {
-            viewPort = myViewPort.stretchY((double) getHeight() / getWidth());
+            viewPort = curViewPort.stretchY((double) getHeight() / getWidth());
         } else /* if getWidth() > getHeight() */ {
-            viewPort = myViewPort.stretchX((double) getWidth() / getHeight());
+            viewPort = curViewPort.stretchX((double) getWidth() / getHeight());
         }
 
         lastUpdateHeight = getHeight();
@@ -262,14 +272,18 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
     @Override
     public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
         if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) != 0) {
-            setViewPort(myViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
+            setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
         } else {
-            setViewPort(myViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
+            setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
         }
     }
 
     public interface AsyncImageRenderer {
         SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height);
+
+        default AsyncImageRenderer copy() {
+            return this;
+        }
     }
 
     private static class ImageCtx {
@@ -294,7 +308,14 @@ public class AsyncImageViewer extends JPanel implements MouseListener, MouseMoti
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            setViewPort(myViewPort.shift(dx, dy));
+            setViewPort(curViewPort.shift(dx, dy));
         }
+    }
+
+    /**
+     * @return A copy of this image viewer, with the same settings and renderer.
+     */
+    public AsyncImageViewer copy() {
+        return new AsyncImageViewer(renderer.copy(), getSettingSquareSelection(), getSettingCompensateAspectRatio(), getViewPort());
     }
 }

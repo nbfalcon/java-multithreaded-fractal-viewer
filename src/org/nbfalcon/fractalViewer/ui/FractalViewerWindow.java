@@ -19,11 +19,11 @@ public class FractalViewerWindow extends JFrame {
     private final AsyncImageViewer myViewer;
     private final ImageExportChooser saveImageChooser = new ImageExportChooser();
 
-    public FractalViewerWindow() {
+    public FractalViewerWindow(AsyncImageViewer viewer) {
         super("Fractal Viewer - Mandelbrot");
 
         // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
-        myViewer = new AsyncImageViewer(new MandelbrotFractal());
+        myViewer = viewer;
         setJMenuBar(createMenu());
         myViewer.setPreferredSize(new Dimension(800, 800));
         add(myViewer);
@@ -32,11 +32,7 @@ public class FractalViewerWindow extends JFrame {
     }
 
     private FractalViewerWindow copyWin() {
-        FractalViewerWindow window = new FractalViewerWindow();
-
-        window.myViewer.renderer = myViewer.renderer;
-        // This won't cause a re-render, since the renderer isn't visible at this point
-        window.myViewer.setViewPort(myViewer.getViewPort());
+        FractalViewerWindow window = new FractalViewerWindow(myViewer.copy());
 
         window.setSize(getSize());
         return window;
@@ -132,7 +128,7 @@ public class FractalViewerWindow extends JFrame {
             }
         });
         view.add(squarifyPerspective);
-        JCheckBoxMenuItem forceSquareSelection = new JCheckBoxMenuItem("Always use square selection");
+        JCheckBoxMenuItem forceSquareSelection = new JCheckBoxMenuItem("Always Use Square Selection");
         SwingUtilitiesX.dataBind(forceSquareSelection,
                 myViewer::getSettingSquareSelection, myViewer::setSettingSquareSelection);
         view.add(forceSquareSelection);
