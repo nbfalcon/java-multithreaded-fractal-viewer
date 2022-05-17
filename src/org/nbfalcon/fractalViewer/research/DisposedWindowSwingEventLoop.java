@@ -1,7 +1,5 @@
 package org.nbfalcon.fractalViewer.research;
 
-import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
-
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.lang.reflect.InvocationTargetException;

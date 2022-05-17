@@ -1,7 +1,8 @@
 package org.nbfalcon.fractalViewer.app;
 
+import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
+import org.nbfalcon.fractalViewer.fractals.JuliaFractal;
 import org.nbfalcon.fractalViewer.fractals.MandelbrotFractal;
-import org.nbfalcon.fractalViewer.ui.AsyncImageViewer;
 import org.nbfalcon.fractalViewer.ui.FractalViewerApplicationContext;
 import org.nbfalcon.fractalViewer.ui.FractalViewerWindow;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
@@ -12,7 +13,9 @@ import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +46,9 @@ public class FractalViewerApplication implements FractalViewerApplicationContext
     }
 
     public void createInitialWindow() {
-        MandelbrotFractal fractal = new MandelbrotFractal(myRenderPool);
-        FractalViewerWindow window = new FractalViewerWindow(new AsyncImageViewer(fractal), this);
+        List<FractalRenderer> allFractals = List.of(
+                new MandelbrotFractal(getRenderPool()), new JuliaFractal(getRenderPool()));
+        FractalViewerWindow window = new FractalViewerWindow(allFractals, 0, this);
         registerWindow(window, true);
     }
 
@@ -82,6 +86,11 @@ public class FractalViewerApplication implements FractalViewerApplicationContext
     @Override
     public ImageExportChooser getExportChooser() {
         return sharedExportChooser;
+    }
+
+    @Override
+    public MultithreadedExecutor getRenderPool() {
+        return myRenderPool;
     }
 
     @Override

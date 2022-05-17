@@ -2,7 +2,6 @@ package org.nbfalcon.fractalViewer.research;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BufferedImageMemoryLeak {

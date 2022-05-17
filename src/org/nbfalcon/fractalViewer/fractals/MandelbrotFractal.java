@@ -14,6 +14,18 @@ public class MandelbrotFractal extends FractalBase {
 
     @Override
     public SimplePromise<BufferedImage> renderWithCustomPool(MultithreadedExecutor pool, ViewPort viewPort, int width, int height) {
-        return renderWithCustomPool1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(xy, Complex.ZERO, maxIter));
+        return renderWithCustomPool1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(xy, Complex.ZERO, maxIter, 2.0));
+    }
+
+    @Override
+    public FractalRenderer copy() {
+        MandelbrotFractal copyOfMe = new MandelbrotFractal(threadPool);
+        copyOfMe.maxIter = this.maxIter;
+        return copyOfMe;
+    }
+
+    @Override
+    public String getName() {
+        return "Mandelbrot";
     }
 }

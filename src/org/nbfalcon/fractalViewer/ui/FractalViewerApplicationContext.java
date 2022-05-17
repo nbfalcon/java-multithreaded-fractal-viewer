@@ -13,5 +13,7 @@ public interface FractalViewerApplicationContext {
 
     ImageExportChooser getExportChooser();
 
+    MultithreadedExecutor getRenderPool();
+
     MultithreadedExecutor getExportPool();
 }

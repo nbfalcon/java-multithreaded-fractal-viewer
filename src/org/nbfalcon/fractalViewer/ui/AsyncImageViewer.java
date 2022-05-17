@@ -16,7 +16,8 @@ public class AsyncImageViewer extends JPanel {
     private static final ViewPort DEFAULT_VIEWPORT = new ViewPort(-2.0, 2.0, 2.0, -2.0);
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
     private final AbstractAction cancelSelectionAction;
-    public AsyncImageRenderer renderer;
+    public Consumer<ViewPort> createNewWindowWithViewportUserAction;
+    private AsyncImageRenderer renderer;
     private boolean havePressedSelection = false;
     private boolean haveSelection = false;
     private boolean settingSquareSelection;
@@ -25,9 +26,6 @@ public class AsyncImageViewer extends JPanel {
     private SimplePromise<Void> cancel = null;
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
-
-    public Consumer<ViewPort> createNewWindowWithViewportUserAction;
-
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
         super();
 
@@ -74,8 +72,7 @@ public class AsyncImageViewer extends JPanel {
                             createNewWindowWithViewportUserAction.accept(selectionSlice);
                         }
                         repaint();
-                    }
-                    else {
+                    } else {
                         setViewPort(selectionSlice);
                     }
 
@@ -180,6 +177,17 @@ public class AsyncImageViewer extends JPanel {
         return DEFAULT_VIEWPORT.copy();
     }
 
+    public AsyncImageRenderer getRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(AsyncImageRenderer renderer) {
+        if (renderer != this.renderer) {
+            this.renderer = renderer;
+            redrawAsync();
+        }
+    }
+
     public boolean getSettingSquareSelection() {
         return settingSquareSelection;
     }
@@ -246,7 +254,7 @@ public class AsyncImageViewer extends JPanel {
      * <p>
      * Non-EDT-safe.
      */
-    private void redrawAsync() {
+    public void redrawAsync() {
         // 1. Do we even have to update?
         // Not visible?
         if (getWidth() <= 0 || getHeight() <= 0 || !isShowing()) return;
