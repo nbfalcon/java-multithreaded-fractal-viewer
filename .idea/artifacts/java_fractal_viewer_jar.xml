@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="java-fractal-viewer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/java_fractal_viewer_jar</output-path>
+    <root id="archive" name="java-fractal-viewer.jar">
+      <element id="module-output" name="java-fractal-viewer" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,13 @@
+#+TITLE: Research
+* AbstractVLambdaInlining
+We wish to investigate whether the JVM ...
+1. inlines lambdas/method references across 1 invocation (similar to kotlin
+   ~inline~)
+2. can use devirtualization to inline the abstract implementation of a derived
+   class in a tight loop if that implementation is trivial.
+
+Conclusion: 1. is true, 2. isn't.
+** Results
+- Manual loop took: 0.00491 millis
+- Ineritance took: 121.497989 millis
+- Inline (Lambda) took: 0.137569 millis

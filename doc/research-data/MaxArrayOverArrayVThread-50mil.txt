@@ -1,0 +1,802 @@
+/home/nikita/.jdks/corretto-11.0.11/bin/java -Xmx4G -javaagent:/var/lib/snapd/snap/intellij-idea-community/361/lib/idea_rt.jar=42689:/var/lib/snapd/snap/intellij-idea-community/361/bin -Dfile.encoding=UTF-8 -classpath /home/nikita/Projects/java-fractal-viewer/target/classes:/home/nikita/.m2/repository/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar:/home/nikita/.m2/repository/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar org.nbfalcon.fractalViewer.research.MaxOverArrayVThreads
+I = 0:
+GC took: 3.856564ms
+Generate (single) took: 605.008988ms
+Generate (parallel) took: 223.59087ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 223.499751ms
+Max (single) took: 38.399542ms
+Max (parallel) took: 44.792978ms
+Max (parallel, non-blocked) took: 53.049986ms
+I = 1:
+GC took: 31.266003ms
+Generate (single) took: 620.466761ms
+Generate (parallel) took: 161.197233ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 175.170552ms
+Max (single) took: 33.007723ms
+Max (parallel) took: 15.137315ms
+Max (parallel, non-blocked) took: 31.705641ms
+I = 2:
+GC took: 31.29664ms
+Generate (single) took: 639.018572ms
+Generate (parallel) took: 186.238568ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.91425ms
+Max (single) took: 33.027745ms
+Max (parallel) took: 15.326231ms
+Max (parallel, non-blocked) took: 20.020322ms
+I = 3:
+GC took: 33.999152ms
+Generate (single) took: 650.834238ms
+Generate (parallel) took: 161.346974ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 180.491749ms
+Max (single) took: 33.418322ms
+Max (parallel) took: 14.616166ms
+Max (parallel, non-blocked) took: 33.399408ms
+I = 4:
+GC took: 33.17181ms
+Generate (single) took: 637.498401ms
+Generate (parallel) took: 160.092146ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 193.288067ms
+Max (single) took: 32.939527ms
+Max (parallel) took: 14.022241ms
+Max (parallel, non-blocked) took: 18.519373ms
+I = 5:
+GC took: 31.512577ms
+Generate (single) took: 636.774464ms
+Generate (parallel) took: 158.603024ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 210.130758ms
+Max (single) took: 33.573256ms
+Max (parallel) took: 15.155673ms
+Max (parallel, non-blocked) took: 27.219636ms
+I = 6:
+GC took: 33.117895ms
+Generate (single) took: 637.847265ms
+Generate (parallel) took: 159.517684ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.555857ms
+Max (single) took: 32.989946ms
+Max (parallel) took: 14.030859ms
+Max (parallel, non-blocked) took: 18.309128ms
+I = 7:
+GC took: 30.868284ms
+Generate (single) took: 637.433513ms
+Generate (parallel) took: 165.315001ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.906041ms
+Max (single) took: 33.001611ms
+Max (parallel) took: 8.932533ms
+Max (parallel, non-blocked) took: 23.179024ms
+I = 8:
+GC took: 31.059687ms
+Generate (single) took: 635.867866ms
+Generate (parallel) took: 158.834885ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.863871ms
+Max (single) took: 32.929446ms
+Max (parallel) took: 15.267891ms
+Max (parallel, non-blocked) took: 18.251364ms
+I = 9:
+GC took: 31.493192ms
+Generate (single) took: 636.543342ms
+Generate (parallel) took: 159.156502ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.290171ms
+Max (single) took: 32.954149ms
+Max (parallel) took: 13.728308ms
+Max (parallel, non-blocked) took: 18.259739ms
+I = 10:
+GC took: 31.775664ms
+Generate (single) took: 637.380556ms
+Generate (parallel) took: 159.431604ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.12052ms
+Max (single) took: 32.942206ms
+Max (parallel) took: 13.642772ms
+Max (parallel, non-blocked) took: 18.197433ms
+I = 11:
+GC took: 31.32338ms
+Generate (single) took: 637.194823ms
+Generate (parallel) took: 158.906142ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 205.421711ms
+Max (single) took: 33.094479ms
+Max (parallel) took: 20.762765ms
+Max (parallel, non-blocked) took: 29.845819ms
+I = 12:
+GC took: 31.10331ms
+Generate (single) took: 636.824014ms
+Generate (parallel) took: 159.837651ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.509535ms
+Max (single) took: 32.936308ms
+Max (parallel) took: 12.106094ms
+Max (parallel, non-blocked) took: 21.002397ms
+I = 13:
+GC took: 31.156668ms
+Generate (single) took: 636.817357ms
+Generate (parallel) took: 160.430808ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.522247ms
+Max (single) took: 33.273765ms
+Max (parallel) took: 11.149001ms
+Max (parallel, non-blocked) took: 20.059472ms
+I = 14:
+GC took: 31.718444ms
+Generate (single) took: 638.410971ms
+Generate (parallel) took: 158.877936ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.861495ms
+Max (single) took: 33.006075ms
+Max (parallel) took: 9.965717ms
+Max (parallel, non-blocked) took: 25.941004ms
+I = 15:
+GC took: 31.114987ms
+Generate (single) took: 637.588151ms
+Generate (parallel) took: 159.336676ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.686744ms
+Max (single) took: 33.01202ms
+Max (parallel) took: 13.857493ms
+Max (parallel, non-blocked) took: 18.257711ms
+I = 16:
+GC took: 31.500345ms
+Generate (single) took: 639.12415ms
+Generate (parallel) took: 159.691275ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.068865ms
+Max (single) took: 32.96041ms
+Max (parallel) took: 14.088099ms
+Max (parallel, non-blocked) took: 18.074011ms
+I = 17:
+GC took: 31.961756ms
+Generate (single) took: 637.335155ms
+Generate (parallel) took: 158.568982ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.490742ms
+Max (single) took: 32.9953ms
+Max (parallel) took: 13.935798ms
+Max (parallel, non-blocked) took: 18.268896ms
+I = 18:
+GC took: 30.869745ms
+Generate (single) took: 638.340445ms
+Generate (parallel) took: 160.198357ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.115483ms
+Max (single) took: 33.072741ms
+Max (parallel) took: 12.175893ms
+Max (parallel, non-blocked) took: 18.148076ms
+I = 19:
+GC took: 31.298744ms
+Generate (single) took: 639.106913ms
+Generate (parallel) took: 158.60625ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.976583ms
+Max (single) took: 33.034765ms
+Max (parallel) took: 14.096065ms
+Max (parallel, non-blocked) took: 18.298681ms
+I = 20:
+GC took: 31.343045ms
+Generate (single) took: 638.469572ms
+Generate (parallel) took: 158.174948ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.614533ms
+Max (single) took: 32.942736ms
+Max (parallel) took: 13.732467ms
+Max (parallel, non-blocked) took: 18.202228ms
+I = 21:
+GC took: 31.454539ms
+Generate (single) took: 636.695335ms
+Generate (parallel) took: 158.296189ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 161.93936ms
+Max (single) took: 33.017781ms
+Max (parallel) took: 13.658355ms
+Max (parallel, non-blocked) took: 18.158158ms
+I = 22:
+GC took: 31.005228ms
+Generate (single) took: 637.839455ms
+Generate (parallel) took: 159.634258ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.447684ms
+Max (single) took: 32.946925ms
+Max (parallel) took: 13.688964ms
+Max (parallel, non-blocked) took: 18.210411ms
+I = 23:
+GC took: 31.077778ms
+Generate (single) took: 636.67065ms
+Generate (parallel) took: 158.896903ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.997088ms
+Max (single) took: 33.02275ms
+Max (parallel) took: 14.24889ms
+Max (parallel, non-blocked) took: 24.260494ms
+I = 24:
+GC took: 31.721847ms
+Generate (single) took: 637.240105ms
+Generate (parallel) took: 159.757062ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.916148ms
+Max (single) took: 33.033818ms
+Max (parallel) took: 8.984268ms
+Max (parallel, non-blocked) took: 18.112441ms
+I = 25:
+GC took: 31.220699ms
+Generate (single) took: 635.964455ms
+Generate (parallel) took: 158.852796ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.459373ms
+Max (single) took: 33.026135ms
+Max (parallel) took: 13.700413ms
+Max (parallel, non-blocked) took: 20.884692ms
+I = 26:
+GC took: 31.291007ms
+Generate (single) took: 637.082023ms
+Generate (parallel) took: 158.904917ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.517218ms
+Max (single) took: 32.99385ms
+Max (parallel) took: 13.880595ms
+Max (parallel, non-blocked) took: 18.20174ms
+I = 27:
+GC took: 31.127668ms
+Generate (single) took: 650.298161ms
+Generate (parallel) took: 158.450776ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.09187ms
+Max (single) took: 33.089108ms
+Max (parallel) took: 15.00303ms
+Max (parallel, non-blocked) took: 18.208722ms
+I = 28:
+GC took: 31.439615ms
+Generate (single) took: 637.140228ms
+Generate (parallel) took: 160.32124ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.937941ms
+Max (single) took: 32.95676ms
+Max (parallel) took: 13.395601ms
+Max (parallel, non-blocked) took: 18.204952ms
+I = 29:
+GC took: 30.974642ms
+Generate (single) took: 637.128555ms
+Generate (parallel) took: 159.629532ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.233489ms
+Max (single) took: 32.953956ms
+Max (parallel) took: 13.676936ms
+Max (parallel, non-blocked) took: 18.19058ms
+I = 30:
+GC took: 31.524506ms
+Generate (single) took: 637.658706ms
+Generate (parallel) took: 159.791043ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.978855ms
+Max (single) took: 32.91097ms
+Max (parallel) took: 12.439543ms
+Max (parallel, non-blocked) took: 18.144977ms
+I = 31:
+GC took: 30.883418ms
+Generate (single) took: 639.226218ms
+Generate (parallel) took: 159.39824ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.225815ms
+Max (single) took: 32.948884ms
+Max (parallel) took: 8.930826ms
+Max (parallel, non-blocked) took: 20.124284ms
+I = 32:
+GC took: 32.283591ms
+Generate (single) took: 636.48092ms
+Generate (parallel) took: 159.862129ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.831934ms
+Max (single) took: 32.989965ms
+Max (parallel) took: 12.380484ms
+Max (parallel, non-blocked) took: 18.175545ms
+I = 33:
+GC took: 31.24885ms
+Generate (single) took: 640.718026ms
+Generate (parallel) took: 158.69633ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 161.919903ms
+Max (single) took: 32.970678ms
+Max (parallel) took: 12.486317ms
+Max (parallel, non-blocked) took: 18.145483ms
+I = 34:
+GC took: 31.684143ms
+Generate (single) took: 641.08769ms
+Generate (parallel) took: 157.641664ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.726024ms
+Max (single) took: 32.959563ms
+Max (parallel) took: 13.273916ms
+Max (parallel, non-blocked) took: 18.201627ms
+I = 35:
+GC took: 30.844196ms
+Generate (single) took: 638.365883ms
+Generate (parallel) took: 159.172365ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.268139ms
+Max (single) took: 33.024514ms
+Max (parallel) took: 13.594882ms
+Max (parallel, non-blocked) took: 18.195338ms
+I = 36:
+GC took: 32.208206ms
+Generate (single) took: 636.998697ms
+Generate (parallel) took: 159.805881ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.153408ms
+Max (single) took: 33.023012ms
+Max (parallel) took: 8.891382ms
+Max (parallel, non-blocked) took: 19.576749ms
+I = 37:
+GC took: 31.616848ms
+Generate (single) took: 640.941869ms
+Generate (parallel) took: 159.834955ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.814544ms
+Max (single) took: 33.051817ms
+Max (parallel) took: 12.939485ms
+Max (parallel, non-blocked) took: 18.202276ms
+I = 38:
+GC took: 31.274122ms
+Generate (single) took: 639.401239ms
+Generate (parallel) took: 159.143699ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.853883ms
+Max (single) took: 32.960137ms
+Max (parallel) took: 14.28728ms
+Max (parallel, non-blocked) took: 19.042456ms
+I = 39:
+GC took: 31.771595ms
+Generate (single) took: 638.64756ms
+Generate (parallel) took: 159.603284ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.238106ms
+Max (single) took: 32.972014ms
+Max (parallel) took: 13.401569ms
+Max (parallel, non-blocked) took: 18.197813ms
+I = 40:
+GC took: 31.419285ms
+Generate (single) took: 638.376607ms
+Generate (parallel) took: 158.96102ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.870876ms
+Max (single) took: 33.005944ms
+Max (parallel) took: 12.804148ms
+Max (parallel, non-blocked) took: 18.147664ms
+I = 41:
+GC took: 31.059462ms
+Generate (single) took: 637.626448ms
+Generate (parallel) took: 159.341329ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.644803ms
+Max (single) took: 32.978987ms
+Max (parallel) took: 11.009938ms
+Max (parallel, non-blocked) took: 18.200641ms
+I = 42:
+GC took: 31.331919ms
+Generate (single) took: 640.009569ms
+Generate (parallel) took: 161.907024ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.667933ms
+Max (single) took: 33.023228ms
+Max (parallel) took: 14.16726ms
+Max (parallel, non-blocked) took: 18.169591ms
+I = 43:
+GC took: 31.505224ms
+Generate (single) took: 638.362779ms
+Generate (parallel) took: 159.271505ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.555721ms
+Max (single) took: 32.93268ms
+Max (parallel) took: 12.549617ms
+Max (parallel, non-blocked) took: 18.129178ms
+I = 44:
+GC took: 31.323353ms
+Generate (single) took: 637.152636ms
+Generate (parallel) took: 158.89796ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.585918ms
+Max (single) took: 32.973626ms
+Max (parallel) took: 13.983143ms
+Max (parallel, non-blocked) took: 18.161153ms
+I = 45:
+GC took: 31.501016ms
+Generate (single) took: 638.112417ms
+Generate (parallel) took: 159.532104ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.30856ms
+Max (single) took: 33.072905ms
+Max (parallel) took: 11.196752ms
+Max (parallel, non-blocked) took: 18.36245ms
+I = 46:
+GC took: 31.2524ms
+Generate (single) took: 638.69209ms
+Generate (parallel) took: 168.454092ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.708237ms
+Max (single) took: 32.99824ms
+Max (parallel) took: 8.907546ms
+Max (parallel, non-blocked) took: 18.204928ms
+I = 47:
+GC took: 32.04015ms
+Generate (single) took: 638.406963ms
+Generate (parallel) took: 158.315767ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.34654ms
+Max (single) took: 32.969312ms
+Max (parallel) took: 13.583369ms
+Max (parallel, non-blocked) took: 18.165696ms
+I = 48:
+GC took: 31.31359ms
+Generate (single) took: 650.094582ms
+Generate (parallel) took: 159.103229ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.362856ms
+Max (single) took: 32.996033ms
+Max (parallel) took: 14.397413ms
+Max (parallel, non-blocked) took: 18.133529ms
+I = 49:
+GC took: 31.323336ms
+Generate (single) took: 638.391371ms
+Generate (parallel) took: 160.326396ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.834976ms
+Max (single) took: 33.08005ms
+Max (parallel) took: 13.788891ms
+Max (parallel, non-blocked) took: 18.221318ms
+I = 50:
+GC took: 31.773755ms
+Generate (single) took: 637.871727ms
+Generate (parallel) took: 161.896464ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.931271ms
+Max (single) took: 33.004879ms
+Max (parallel) took: 14.210395ms
+Max (parallel, non-blocked) took: 19.740913ms
+I = 51:
+GC took: 31.300937ms
+Generate (single) took: 637.736789ms
+Generate (parallel) took: 157.932552ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.062713ms
+Max (single) took: 32.92767ms
+Max (parallel) took: 10.816569ms
+Max (parallel, non-blocked) took: 19.891524ms
+I = 52:
+GC took: 31.367482ms
+Generate (single) took: 638.359931ms
+Generate (parallel) took: 158.366788ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.944485ms
+Max (single) took: 32.951833ms
+Max (parallel) took: 10.270941ms
+Max (parallel, non-blocked) took: 18.142987ms
+I = 53:
+GC took: 31.42273ms
+Generate (single) took: 638.964919ms
+Generate (parallel) took: 160.085353ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.671726ms
+Max (single) took: 32.945482ms
+Max (parallel) took: 9.13418ms
+Max (parallel, non-blocked) took: 18.169782ms
+I = 54:
+GC took: 31.792683ms
+Generate (single) took: 653.258447ms
+Generate (parallel) took: 160.789193ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.455864ms
+Max (single) took: 33.014505ms
+Max (parallel) took: 14.168553ms
+Max (parallel, non-blocked) took: 20.841105ms
+I = 55:
+GC took: 31.291806ms
+Generate (single) took: 637.914341ms
+Generate (parallel) took: 158.093375ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.684919ms
+Max (single) took: 33.016631ms
+Max (parallel) took: 14.205242ms
+Max (parallel, non-blocked) took: 18.143054ms
+I = 56:
+GC took: 31.575133ms
+Generate (single) took: 640.39817ms
+Generate (parallel) took: 159.176375ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.462578ms
+Max (single) took: 32.964194ms
+Max (parallel) took: 15.319919ms
+Max (parallel, non-blocked) took: 18.347558ms
+I = 57:
+GC took: 31.939597ms
+Generate (single) took: 640.005835ms
+Generate (parallel) took: 158.57002ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.574203ms
+Max (single) took: 32.948347ms
+Max (parallel) took: 14.108849ms
+Max (parallel, non-blocked) took: 18.174144ms
+I = 58:
+GC took: 31.610979ms
+Generate (single) took: 637.548852ms
+Generate (parallel) took: 160.419388ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.263485ms
+Max (single) took: 32.988362ms
+Max (parallel) took: 18.030239ms
+Max (parallel, non-blocked) took: 26.590923ms
+I = 59:
+GC took: 31.478458ms
+Generate (single) took: 637.47322ms
+Generate (parallel) took: 158.469606ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.973728ms
+Max (single) took: 33.019325ms
+Max (parallel) took: 10.921866ms
+Max (parallel, non-blocked) took: 18.157968ms
+I = 60:
+GC took: 31.161743ms
+Generate (single) took: 638.239075ms
+Generate (parallel) took: 160.553894ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.078269ms
+Max (single) took: 32.989031ms
+Max (parallel) took: 11.901751ms
+Max (parallel, non-blocked) took: 19.498847ms
+I = 61:
+GC took: 31.523338ms
+Generate (single) took: 640.481681ms
+Generate (parallel) took: 159.707404ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.560155ms
+Max (single) took: 33.02776ms
+Max (parallel) took: 12.383593ms
+Max (parallel, non-blocked) took: 18.189946ms
+I = 62:
+GC took: 31.381588ms
+Generate (single) took: 639.776744ms
+Generate (parallel) took: 159.399645ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.281514ms
+Max (single) took: 33.154951ms
+Max (parallel) took: 10.415181ms
+Max (parallel, non-blocked) took: 18.13721ms
+I = 63:
+GC took: 31.27653ms
+Generate (single) took: 639.432139ms
+Generate (parallel) took: 159.653405ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.825575ms
+Max (single) took: 32.950092ms
+Max (parallel) took: 11.990018ms
+Max (parallel, non-blocked) took: 18.166476ms
+I = 64:
+GC took: 31.692916ms
+Generate (single) took: 638.181459ms
+Generate (parallel) took: 159.993488ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.380643ms
+Max (single) took: 32.981789ms
+Max (parallel) took: 11.860162ms
+Max (parallel, non-blocked) took: 18.183705ms
+I = 65:
+GC took: 31.551298ms
+Generate (single) took: 636.134126ms
+Generate (parallel) took: 159.678569ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.109806ms
+Max (single) took: 32.975224ms
+Max (parallel) took: 13.802913ms
+Max (parallel, non-blocked) took: 18.139073ms
+I = 66:
+GC took: 31.040804ms
+Generate (single) took: 636.755085ms
+Generate (parallel) took: 159.985411ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 161.514377ms
+Max (single) took: 33.001934ms
+Max (parallel) took: 13.989998ms
+Max (parallel, non-blocked) took: 18.168927ms
+I = 67:
+GC took: 31.85943ms
+Generate (single) took: 636.791385ms
+Generate (parallel) took: 159.254329ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.094766ms
+Max (single) took: 32.974348ms
+Max (parallel) took: 11.827486ms
+Max (parallel, non-blocked) took: 18.142607ms
+I = 68:
+GC took: 31.889336ms
+Generate (single) took: 639.483069ms
+Generate (parallel) took: 159.160508ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 166.061205ms
+Max (single) took: 32.998521ms
+Max (parallel) took: 13.03082ms
+Max (parallel, non-blocked) took: 18.101561ms
+I = 69:
+GC took: 31.221106ms
+Generate (single) took: 640.643836ms
+Generate (parallel) took: 161.143486ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.482083ms
+Max (single) took: 33.028986ms
+Max (parallel) took: 12.424794ms
+Max (parallel, non-blocked) took: 18.171655ms
+I = 70:
+GC took: 31.56044ms
+Generate (single) took: 638.324805ms
+Generate (parallel) took: 158.426721ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.859806ms
+Max (single) took: 33.003093ms
+Max (parallel) took: 14.136587ms
+Max (parallel, non-blocked) took: 18.231524ms
+I = 71:
+GC took: 31.325969ms
+Generate (single) took: 639.120437ms
+Generate (parallel) took: 160.46043ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.388573ms
+Max (single) took: 32.933068ms
+Max (parallel) took: 13.266711ms
+Max (parallel, non-blocked) took: 18.176398ms
+I = 72:
+GC took: 31.492071ms
+Generate (single) took: 642.306402ms
+Generate (parallel) took: 158.564155ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.918551ms
+Max (single) took: 33.013904ms
+Max (parallel) took: 9.88052ms
+Max (parallel, non-blocked) took: 18.162516ms
+I = 73:
+GC took: 31.280209ms
+Generate (single) took: 638.735188ms
+Generate (parallel) took: 159.753125ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.355888ms
+Max (single) took: 33.000048ms
+Max (parallel) took: 11.513282ms
+Max (parallel, non-blocked) took: 18.170137ms
+I = 74:
+GC took: 31.466578ms
+Generate (single) took: 638.131176ms
+Generate (parallel) took: 159.529823ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.507178ms
+Max (single) took: 32.977692ms
+Max (parallel) took: 12.562771ms
+Max (parallel, non-blocked) took: 18.178696ms
+I = 75:
+GC took: 31.446128ms
+Generate (single) took: 637.774591ms
+Generate (parallel) took: 159.902934ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.293401ms
+Max (single) took: 32.993185ms
+Max (parallel) took: 13.977635ms
+Max (parallel, non-blocked) took: 19.997341ms
+I = 76:
+GC took: 31.354625ms
+Generate (single) took: 639.149005ms
+Generate (parallel) took: 159.191831ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.667483ms
+Max (single) took: 32.983573ms
+Max (parallel) took: 15.454842ms
+Max (parallel, non-blocked) took: 20.780497ms
+I = 77:
+GC took: 31.679347ms
+Generate (single) took: 637.406582ms
+Generate (parallel) took: 158.086092ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.716855ms
+Max (single) took: 32.977976ms
+Max (parallel) took: 13.994018ms
+Max (parallel, non-blocked) took: 18.076203ms
+I = 78:
+GC took: 31.314585ms
+Generate (single) took: 637.563114ms
+Generate (parallel) took: 159.591705ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.927227ms
+Max (single) took: 33.025899ms
+Max (parallel) took: 8.624311ms
+Max (parallel, non-blocked) took: 18.13823ms
+I = 79:
+GC took: 31.14257ms
+Generate (single) took: 638.39835ms
+Generate (parallel) took: 159.158296ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.7634ms
+Max (single) took: 33.390756ms
+Max (parallel) took: 11.033549ms
+Max (parallel, non-blocked) took: 18.132905ms
+I = 80:
+GC took: 31.556221ms
+Generate (single) took: 637.229064ms
+Generate (parallel) took: 205.378416ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.313623ms
+Max (single) took: 34.617392ms
+Max (parallel) took: 12.327464ms
+Max (parallel, non-blocked) took: 18.168613ms
+I = 81:
+GC took: 31.973328ms
+Generate (single) took: 640.102643ms
+Generate (parallel) took: 160.620211ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.541738ms
+Max (single) took: 33.067001ms
+Max (parallel) took: 14.09198ms
+Max (parallel, non-blocked) took: 19.599928ms
+I = 82:
+GC took: 31.640498ms
+Generate (single) took: 636.825908ms
+Generate (parallel) took: 159.133985ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.49594ms
+Max (single) took: 33.024058ms
+Max (parallel) took: 12.196233ms
+Max (parallel, non-blocked) took: 18.354004ms
+I = 83:
+GC took: 31.508654ms
+Generate (single) took: 636.272239ms
+Generate (parallel) took: 158.916007ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.457204ms
+Max (single) took: 33.101287ms
+Max (parallel) took: 13.711211ms
+Max (parallel, non-blocked) took: 18.135205ms
+I = 84:
+GC took: 31.444034ms
+Generate (single) took: 639.889974ms
+Generate (parallel) took: 158.601585ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.604951ms
+Max (single) took: 33.02641ms
+Max (parallel) took: 9.843989ms
+Max (parallel, non-blocked) took: 18.114536ms
+I = 85:
+GC took: 31.357875ms
+Generate (single) took: 638.918269ms
+Generate (parallel) took: 159.573234ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.757864ms
+Max (single) took: 32.973219ms
+Max (parallel) took: 14.195165ms
+Max (parallel, non-blocked) took: 18.222835ms
+I = 86:
+GC took: 32.497354ms
+Generate (single) took: 637.884187ms
+Generate (parallel) took: 159.235166ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.076759ms
+Max (single) took: 32.959398ms
+Max (parallel) took: 8.736619ms
+Max (parallel, non-blocked) took: 18.085974ms
+I = 87:
+GC took: 31.185231ms
+Generate (single) took: 638.447099ms
+Generate (parallel) took: 159.009ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 166.493167ms
+Max (single) took: 33.019832ms
+Max (parallel) took: 14.417801ms
+Max (parallel, non-blocked) took: 18.205961ms
+I = 88:
+GC took: 31.943564ms
+Generate (single) took: 636.935757ms
+Generate (parallel) took: 158.945312ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.990176ms
+Max (single) took: 33.110228ms
+Max (parallel) took: 13.177429ms
+Max (parallel, non-blocked) took: 18.136272ms
+I = 89:
+GC took: 31.52281ms
+Generate (single) took: 641.282898ms
+Generate (parallel) took: 160.474996ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.715193ms
+Max (single) took: 32.965037ms
+Max (parallel) took: 13.960837ms
+Max (parallel, non-blocked) took: 18.132097ms
+I = 90:
+GC took: 31.540028ms
+Generate (single) took: 637.3446ms
+Generate (parallel) took: 159.873925ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.366196ms
+Max (single) took: 32.942631ms
+Max (parallel) took: 14.308196ms
+Max (parallel, non-blocked) took: 21.081409ms
+I = 91:
+GC took: 31.723547ms
+Generate (single) took: 637.701675ms
+Generate (parallel) took: 160.862049ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 162.51943ms
+Max (single) took: 33.004801ms
+Max (parallel) took: 12.765688ms
+Max (parallel, non-blocked) took: 18.136248ms
+I = 92:
+GC took: 31.394171ms
+Generate (single) took: 637.779856ms
+Generate (parallel) took: 159.591989ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.163784ms
+Max (single) took: 33.031578ms
+Max (parallel) took: 11.541055ms
+Max (parallel, non-blocked) took: 18.167132ms
+I = 93:
+GC took: 31.740954ms
+Generate (single) took: 639.181297ms
+Generate (parallel) took: 159.802366ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.789325ms
+Max (single) took: 33.015505ms
+Max (parallel) took: 14.059927ms
+Max (parallel, non-blocked) took: 18.124307ms
+I = 94:
+GC took: 31.760624ms
+Generate (single) took: 638.277854ms
+Generate (parallel) took: 160.462273ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.411141ms
+Max (single) took: 33.032979ms
+Max (parallel) took: 14.02313ms
+Max (parallel, non-blocked) took: 19.550084ms
+I = 95:
+GC took: 31.483385ms
+Generate (single) took: 644.808693ms
+Generate (parallel) took: 159.717976ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.184405ms
+Max (single) took: 32.995905ms
+Max (parallel) took: 14.404927ms
+Max (parallel, non-blocked) took: 18.164682ms
+I = 96:
+GC took: 31.553937ms
+Generate (single) took: 638.289072ms
+Generate (parallel) took: 158.194333ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.0973ms
+Max (single) took: 33.11413ms
+Max (parallel) took: 8.943941ms
+Max (parallel, non-blocked) took: 18.175011ms
+I = 97:
+GC took: 31.6836ms
+Generate (single) took: 638.547588ms
+Generate (parallel) took: 160.106568ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 165.27834ms
+Max (single) took: 33.002241ms
+Max (parallel) took: 13.49086ms
+Max (parallel, non-blocked) took: 18.134893ms
+I = 98:
+GC took: 31.17637ms
+Generate (single) took: 638.649138ms
+Generate (parallel) took: 159.178377ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 164.356632ms
+Max (single) took: 32.953065ms
+Max (parallel) took: 13.785493ms
+Max (parallel, non-blocked) took: 18.123691ms
+I = 99:
+GC took: 31.486908ms
+Generate (single) took: 638.856057ms
+Generate (parallel) took: 159.623606ms
+Generate (parallel, no false-cacheline-sharing mitigation) took: 163.171506ms
+Max (single) took: 32.973961ms
+Max (parallel) took: 14.959514ms
+Max (parallel, non-blocked) took: 19.329718ms
+errors: 0
