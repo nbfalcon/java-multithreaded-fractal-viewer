@@ -14,7 +14,7 @@ public interface Palette {
         return pool.submit((threadI, threadN) -> {
             for (int y = threadI; y < height; y += threadN) {
                 for (int x = 0; x < width; x++) {
-                    int nIter = iterMap2D[height * y + x];
+                    int nIter = iterMap2D[y * width + x];
                     image.getRaster().setPixel(x, y, colorizer.apply((float) nIter / maxIter));
                 }
             }

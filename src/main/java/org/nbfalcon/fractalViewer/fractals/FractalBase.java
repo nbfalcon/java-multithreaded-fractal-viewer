@@ -56,7 +56,7 @@ public abstract class FractalBase implements FractalRenderer {
             for (int y = threadI; y < height; y += threadN) {
                 for (int x = 0; x < width; x++) {
                     int nIters = pixel.calcIterations(c0.flatAdd(w * x, h * y), maxIter);
-                    result[y * height + x] = nIters;
+                    result[y * width + x] = nIters;
                 }
             }
         }).map(ignored -> result);
