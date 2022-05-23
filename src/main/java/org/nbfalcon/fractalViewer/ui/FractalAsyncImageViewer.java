@@ -3,12 +3,14 @@ package org.nbfalcon.fractalViewer.ui;
 import org.jetbrains.annotations.NotNull;
 import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
 import org.nbfalcon.fractalViewer.palette.Palette;
+import org.nbfalcon.fractalViewer.util.ArrayUtil;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.LatestPromise;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.util.function.Function;
 
 public class FractalAsyncImageViewer extends AsyncImageViewer {
     private final FractalViewerApplicationContext application;
@@ -16,6 +18,8 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
     private volatile FractalResult last = null;
     private @NotNull FractalRenderer selectedFractal;
     private volatile @NotNull Palette selectedPalette;
+
+    private boolean settingDeriveMaxIter = false;
 
     public FractalAsyncImageViewer(FractalViewerApplicationContext application, @NotNull FractalRenderer initialFractal, @NotNull Palette initialPalette) {
         super();
@@ -44,9 +48,14 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
     }
 
     private SimplePromise<BufferedImage> queuePaletteRerender(FractalResult lastRender) {
-        return cancelPalette.setPromise(getPalette().map2Image(
-                lastRender.indexMap, lastRender.width, lastRender.height, lastRender.maxIter,
-                application.getRenderPool()));
+        Function<Integer, SimplePromise<BufferedImage>> doMapping = (maxIter) -> getPalette().map2Image(
+                lastRender.indexMap, lastRender.width, lastRender.height, maxIter,
+                application.getRenderPool());
+
+        SimplePromise<BufferedImage> resultPromise = getSettingDeriveMaxIter()
+                ? application.getRenderPool().submit(() -> ArrayUtil.max(lastRender.indexMap)).flatMap(doMapping)
+                : doMapping.apply(last.maxIter);
+        return cancelPalette.setPromise(resultPromise);
     }
 
     public Palette getPalette() {
@@ -79,6 +88,15 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
 
     public void setFractal(FractalRenderer selectedFractal) {
         this.selectedFractal = selectedFractal;
+        redrawAsync();
+    }
+
+    public boolean getSettingDeriveMaxIter() {
+        return settingDeriveMaxIter;
+    }
+
+    public void setSettingDeriveMaxIter(boolean newSettingDeriveMaxIter) {
+        this.settingDeriveMaxIter = newSettingDeriveMaxIter;
         redrawAsync();
     }
 

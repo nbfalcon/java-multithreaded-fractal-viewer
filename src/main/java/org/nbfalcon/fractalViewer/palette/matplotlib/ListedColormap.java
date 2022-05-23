@@ -37,7 +37,6 @@ public class ListedColormap extends NamedPaletteBase {
 
     @Override
     public SimplePromise<BufferedImage> map2Image(int[] iterMap2D, int width, int height, int maxIter, MultithreadedExecutor pool) {
-        // FIXME: Take maxIter from mapReducing over the iteration map, and taking the largest iteration count recorded
         return Palette.map2Image1(iterMap2D, width, height, maxIter, pool, (filled) -> {
             int iStart = (int) (filled * (colorList.length - 1));
             if (iStart >= colorList.length - 1) return f2Int(colorList[colorList.length - 1]);

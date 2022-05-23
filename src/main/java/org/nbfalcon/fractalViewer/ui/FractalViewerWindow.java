@@ -222,6 +222,11 @@ public class FractalViewerWindow extends JFrame {
         SwingUtilitiesX.dataBind(compensateAspectRatio,
                 myViewer::getSettingCompensateAspectRatio, myViewer::setSettingCompensateAspectRatio);
         view.add(compensateAspectRatio);
+        JCheckBoxMenuItem deriveMaxIter = new JCheckBoxMenuItem("Derive MaxIter");
+        deriveMaxIter.setToolTipText("Derive the actual maximum iteration count from the rendering.\n" +
+                "This option was mainly an experiment; in practice, it will only make a slight difference when zoomed in.");
+        SwingUtilitiesX.dataBind(deriveMaxIter, myViewer::getSettingDeriveMaxIter, myViewer::setSettingDeriveMaxIter);
+        view.add(deriveMaxIter);
 
         bar.add(file);
         bar.add(fractalMenu);

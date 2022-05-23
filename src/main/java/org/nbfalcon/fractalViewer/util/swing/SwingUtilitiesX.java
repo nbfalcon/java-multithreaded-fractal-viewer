@@ -12,7 +12,15 @@ public class SwingUtilitiesX {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        menuItem.addChangeListener(change -> setter.accept(menuItem.getState()));
+        menuItem.addChangeListener(change -> {
+            try {
+                if (getter.call() != menuItem.getState()) {
+                    setter.accept(menuItem.getState());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void closeWindow(JFrame window) {
