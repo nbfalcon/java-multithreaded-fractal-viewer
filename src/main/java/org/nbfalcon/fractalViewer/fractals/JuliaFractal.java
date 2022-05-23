@@ -48,7 +48,6 @@ public class JuliaFractal extends FractalBase {
 
     @Override
     public FractalRenderer copy() {
-        // FIXME: the threadpool should not be owned by this
         JuliaFractal copyOfMe = new JuliaFractal();
         copyOfMe.x = this.x;
         copyOfMe.y = this.y;

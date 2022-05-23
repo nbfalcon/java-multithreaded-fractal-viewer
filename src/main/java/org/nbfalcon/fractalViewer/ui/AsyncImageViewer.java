@@ -127,7 +127,7 @@ public class AsyncImageViewer extends JPanel {
             @Override
             public void componentShown(ComponentEvent e) {
                 // This isn't called for some reason. Instead, we get two componentResized() events.
-                redrawAsync();
+                componentResized(e);
             }
         });
 
@@ -301,6 +301,20 @@ public class AsyncImageViewer extends JPanel {
         }));
     }
 
+    public void copySettingsFrom(AsyncImageViewer source) {
+        this.settingSquareSelection = source.settingSquareSelection;
+        this.settingCompensateAspectRatio = source.settingCompensateAspectRatio;
+        this.curViewPort = source.curViewPort.copy();
+
+        this.havePressedSelection = source.havePressedSelection;
+        this.haveSelection = source.haveSelection;
+        this.selection.setFrom(source.selection);
+
+        this.bestImage = source.bestImage;
+        // Maybe an update is already queued in the source window, so this is the best we have
+        this.lastUpdateWidth = bestImage.image.getWidth();
+        this.lastUpdateHeight = bestImage.image.getHeight();
+    }
 
     public interface AsyncImageRenderer {
         SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height);

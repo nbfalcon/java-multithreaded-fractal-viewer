@@ -100,6 +100,11 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         redrawAsync();
     }
 
+    public void copySettingsFrom(FractalAsyncImageViewer myViewer) {
+        super.copySettingsFrom(myViewer);
+        this.settingDeriveMaxIter = myViewer.settingDeriveMaxIter;
+    }
+
     private static class FractalResult {
         public final int[] indexMap;
         public final int width;

@@ -92,6 +92,13 @@ public class ViewPort {
         return new ViewPort(x1, y1 - dh / 2, x2, y2 + dh / 2);
     }
 
+    public void setFrom(ViewPort other) {
+        this.x1 = other.x1;
+        this.x2 = other.x2;
+        this.y1 = other.y1;
+        this.y2 = other.y2;
+    }
+
 //    private static boolean feq(double a, double b) {
 //        return Math.abs(a - b) < 0.0001;
 //    }

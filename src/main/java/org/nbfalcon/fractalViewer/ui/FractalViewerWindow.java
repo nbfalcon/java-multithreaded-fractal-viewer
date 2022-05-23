@@ -1,6 +1,7 @@
 package org.nbfalcon.fractalViewer.ui;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
 import org.nbfalcon.fractalViewer.palette.Palette;
 import org.nbfalcon.fractalViewer.palette.PaletteUtil;
@@ -19,6 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.security.Key;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,9 +39,10 @@ public class FractalViewerWindow extends JFrame {
      */
     private final List<FractalRenderer> myAvailableFractals;
 
-    public FractalViewerWindow(List<FractalRenderer> availableFractals, @NotNull FractalRenderer initialFractal,
-                               @NotNull Palette initialPalette,
-                               @NotNull FractalViewerApplicationContext application) {
+    private FractalViewerWindow(List<FractalRenderer> availableFractals, int initialFractal,
+                                @NotNull Palette initialPalette,
+                                @NotNull FractalViewerApplicationContext application,
+                                @Nullable FractalViewerWindow parent) {
         super("Fractal Viewer - Mandelbrot");
 
         // We need WindowClosed to be dispatched
@@ -48,8 +51,7 @@ public class FractalViewerWindow extends JFrame {
         // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
         this.myAvailableFractals = availableFractals;
 
-        // FIXME: viewer needs to be set up correctly in "new Window"
-        this.myViewer = new FractalAsyncImageViewer(application, initialFractal, initialPalette);
+        this.myViewer = new FractalAsyncImageViewer(application, availableFractals.get(initialFractal), initialPalette);
         this.application = application;
 
         myViewer.createNewWindowWithViewportUserAction = (sliced) -> {
@@ -59,6 +61,10 @@ public class FractalViewerWindow extends JFrame {
             newWindow.requestFocus(FocusEvent.Cause.ACTIVATION);
         };
 
+        if (parent != null) {
+            copySettingsFrom(parent);
+        }
+
         setJMenuBar(createMenu());
         myViewer.setPreferredSize(new Dimension(800, 800));
         add(myViewer);
@@ -66,14 +72,30 @@ public class FractalViewerWindow extends JFrame {
         pack();
     }
 
+    public FractalViewerWindow(List<FractalRenderer> availableFractals, int initialFractal,
+                               @NotNull Palette initialPalette,
+                               @NotNull FractalViewerApplicationContext application) {
+        this(availableFractals, initialFractal, initialPalette, application, null);
+    }
+
     private FractalViewerWindow copyWin() {
         FractalViewerWindow window = new FractalViewerWindow(
                 myAvailableFractals.stream().map(FractalRenderer::copy).collect(Collectors.toList()),
-                myViewer.getFractal(), myViewer.getPalette(),
-                application);
+                getSelectedFractalIndex(), myViewer.getPalette(),
+                application, this);
 
         window.setSize(getSize());
         return window;
+    }
+
+    private void copySettingsFrom(FractalViewerWindow source) {
+        myViewer.copySettingsFrom(source.myViewer);
+    }
+
+    private int getSelectedFractalIndex() {
+        int index = myAvailableFractals.indexOf(myViewer.getFractal());
+        assert index != -1;
+        return index;
     }
 
     private JMenuBar createMenu() {
@@ -141,6 +163,7 @@ public class FractalViewerWindow extends JFrame {
                 SwingUtilitiesX.closeWindow(FractalViewerWindow.this);
             }
         });
+        closeWindow.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
         file.add(closeWindow);
         JMenuItem quitAction = new JMenuItem(new AbstractAction("Quit") {
             @Override
