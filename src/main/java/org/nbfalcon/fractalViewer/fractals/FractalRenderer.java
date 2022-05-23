@@ -19,4 +19,6 @@ public interface FractalRenderer extends AsyncImageViewer.AsyncImageRenderer {
     SettingsUI createSettingsUI();
 
     String getName();
+
+    int getMaxIter();
 }

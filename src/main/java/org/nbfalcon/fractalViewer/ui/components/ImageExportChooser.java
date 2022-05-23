@@ -128,6 +128,8 @@ public class ImageExportChooser extends ImageIOFileChooser {
             c.gridwidth = 2;
             c.gridy = 3;
             add(closeAfterSaving, c);
+
+            // FIXME: theme select here
         }
 
         private void updateParentFileName(int newWidth, int newHeight) {

@@ -1,6 +1,7 @@
 package org.nbfalcon.fractalViewer.ui;
 
 import org.nbfalcon.fractalViewer.util.ViewPort;
+import org.nbfalcon.fractalViewer.util.concurrent.LatestPromise;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import org.nbfalcon.fractalViewer.util.swing.MouseEventX;
 
@@ -24,7 +25,7 @@ public class AsyncImageViewer extends JPanel {
     private boolean settingSquareSelection;
     private boolean settingCompensateAspectRatio;
     private ViewPort curViewPort;
-    private SimplePromise<Void> cancel = null;
+    private final LatestPromise cancelRedraw = new LatestPromise();
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
@@ -174,6 +175,19 @@ public class AsyncImageViewer extends JPanel {
         this(renderer, false, true, getDefaultViewport());
     }
 
+    /**
+     * Initialize the renderer to null at first, it must be set later!
+     */
+    public AsyncImageViewer() {
+        this(null);
+    }
+
+    public void injectRenderer(AsyncImageRenderer renderer) {
+        if (this.renderer == null) {
+            this.renderer = renderer;
+        }
+    }
+
     public static ViewPort getDefaultViewport() {
         return DEFAULT_VIEWPORT.copy();
     }
@@ -250,6 +264,11 @@ public class AsyncImageViewer extends JPanel {
         }
     }
 
+    public void updateImage(BufferedImage image) {
+        this.bestImage.image = image;
+        repaint();
+    }
+
     /**
      * Queue a redraw immediately, cancelling the previous one.
      * <p>
@@ -276,13 +295,8 @@ public class AsyncImageViewer extends JPanel {
         // 3. Queue update
         // FIXME: there are no ordering constraints here, but this works since currently
         //  the MultithreadedExecutorPool always runs tasks in the correct order
-        if (cancel != null) {
-            cancel.cancel();
-            cancel = null;
-        }
-        renderer.render(viewPort, getWidth(), getHeight()).then((image) -> SwingUtilities.invokeLater(() -> {
+        cancelRedraw.setPromise(renderer.render(viewPort, getWidth(), getHeight())).then((image) -> SwingUtilities.invokeLater(() -> {
             bestImage = new ImageCtx(viewPort, image);
-            cancel = null;
             repaint();
         }));
     }
@@ -294,7 +308,7 @@ public class AsyncImageViewer extends JPanel {
 
     private static class ImageCtx {
         public final ViewPort viewPort;
-        public final BufferedImage image;
+        public BufferedImage image;
 
         public ImageCtx(ViewPort viewPort, BufferedImage image) {
             this.viewPort = viewPort;

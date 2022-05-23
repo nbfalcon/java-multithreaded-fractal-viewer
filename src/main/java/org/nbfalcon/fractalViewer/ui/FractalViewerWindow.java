@@ -7,7 +7,6 @@ import org.nbfalcon.fractalViewer.palette.PaletteUtil;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
 import org.nbfalcon.fractalViewer.util.ViewPort;
-import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
 
 import javax.imageio.ImageIO;
@@ -16,7 +15,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -27,8 +25,7 @@ import java.util.stream.Collectors;
  * management of multiple windows, which is provided by the [Application] class.
  */
 public class FractalViewerWindow extends JFrame {
-    private final @NotNull AsyncImageViewer myViewer;
-
+    private final @NotNull FractalAsyncImageViewer myViewer;
     private final @NotNull FractalViewerApplicationContext application;
 
     /**
@@ -37,9 +34,6 @@ public class FractalViewerWindow extends JFrame {
      * The currently selected fractal is in {@link #myViewer}.{@link AsyncImageViewer#getRenderer()}.
      */
     private final List<FractalRenderer> myAvailableFractals;
-    private final @NotNull FractalRenderer selectedFractal;
-
-    private @NotNull Palette selectedPalette;
 
     public FractalViewerWindow(List<FractalRenderer> availableFractals, @NotNull FractalRenderer initialFractal,
                                @NotNull Palette initialPalette,
@@ -51,18 +45,9 @@ public class FractalViewerWindow extends JFrame {
 
         // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
         this.myAvailableFractals = availableFractals;
-        this.selectedFractal = initialFractal;
-        this.selectedPalette = initialPalette;
 
         // FIXME: viewer needs to be set up correctly in "new Window"
-        //noinspection Convert2Lambda
-        this.myViewer = new AsyncImageViewer(new AsyncImageViewer.AsyncImageRenderer() {
-            @Override
-            public SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height) {
-                return selectedFractal.renderIterations(viewPort, width, height, application.getRenderPool())
-                        .flatMap((iterations) -> selectedPalette.map2Image(iterations, width, height, 255, application.getRenderPool()));
-            }
-        });
+        this.myViewer = new FractalAsyncImageViewer(application, initialFractal, initialPalette);
         this.application = application;
 
         myViewer.createNewWindowWithViewportUserAction = (sliced) -> {
@@ -81,8 +66,8 @@ public class FractalViewerWindow extends JFrame {
 
     private FractalViewerWindow copyWin() {
         FractalViewerWindow window = new FractalViewerWindow(
-                myAvailableFractals.stream().map(FractalRenderer::copy).collect(Collectors.toList()), selectedFractal,
-                selectedPalette,
+                myAvailableFractals.stream().map(FractalRenderer::copy).collect(Collectors.toList()),
+                myViewer.getFractal(), myViewer.getPalette(),
                 application);
 
         window.setSize(getSize());
@@ -168,7 +153,7 @@ public class FractalViewerWindow extends JFrame {
         for (FractalRenderer fractal : myAvailableFractals) {
             JRadioButtonMenuItem menuItem = createFractalMenuItem(fractal, fractalSelectionGroup);
             fractalMenu.add(menuItem);
-            if (fractal == selectedFractal) {
+            if (fractal == myViewer.getFractal()) {
                 menuItem.setSelected(true);
             }
             fractalMenu.add(menuItem);
@@ -179,7 +164,7 @@ public class FractalViewerWindow extends JFrame {
         fractalMenu.add(new JMenuItem(new AbstractAction("Settings") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                SettingsUI settingsUI = selectedFractal.createSettingsUI();
+                SettingsUI settingsUI = myViewer.getFractal().createSettingsUI();
                 int result = JOptionPane.showOptionDialog(null, settingsUI.getSettingsPanel(),
                         "Configure Fractal", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                         null, new String[]{"Apply", "Cancel"}, JOptionPane.OK_OPTION);
@@ -228,8 +213,6 @@ public class FractalViewerWindow extends JFrame {
         SwingUtilitiesX.dataBind(compensateAspectRatio,
                 myViewer::getSettingCompensateAspectRatio, myViewer::setSettingCompensateAspectRatio);
         view.add(compensateAspectRatio);
-//        JCheckBoxMenuItem useMaximumForIter = new JCheckBoxMenuItem("Make Colors Relative");
-//        view.add(useMaximumForIter);
 
         bar.add(file);
         bar.add(fractalMenu);
@@ -247,13 +230,12 @@ public class FractalViewerWindow extends JFrame {
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(new AbstractAction(palette.getName()) {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
-                    selectedPalette = palette;
-                    myViewer.redrawAsync();
+                    myViewer.setPalette(palette);
                 }
             });
 
             palettes.add(item);
-            if (palette == this.selectedPalette) {
+            if (palette == myViewer.getPalette()) {
                 item.setSelected(true);
             }
             paletteMenu.add(item);
@@ -266,7 +248,7 @@ public class FractalViewerWindow extends JFrame {
         JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(new AbstractAction(fractal.getName()) {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                myViewer.setRenderer(fractal);
+                myViewer.setFractal(fractal);
             }
         });
         buttonGroup.add(menuItem);

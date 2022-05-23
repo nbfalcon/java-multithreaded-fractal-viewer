@@ -91,4 +91,9 @@ public abstract class FractalBase implements FractalRenderer {
     public interface FractalPixelCalc {
         int calcIterations(Complex xy, int maxIter);
     }
+
+    @Override
+    public int getMaxIter() {
+        return maxIter;
+    }
 }
