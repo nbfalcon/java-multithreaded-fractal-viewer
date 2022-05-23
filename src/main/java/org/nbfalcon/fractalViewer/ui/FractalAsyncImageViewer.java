@@ -32,7 +32,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
                 final int maxIter = fractal.getMaxIter();
 
                 SimplePromise<int[]> fractalResult = fractal.renderIterations(
-                        viewPort, width, height, application.getRenderPool());
+                        application.getRenderPool(), viewPort, width, height);
 
                 return fractalResult.flatMap((indexMap) -> {
                     final FractalResult result = new FractalResult(indexMap, width, height, maxIter);

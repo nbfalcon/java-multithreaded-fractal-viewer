@@ -116,7 +116,7 @@ public class FractalViewerWindow extends JFrame {
                     final int nIter = renderer.getMaxIter();
 
                     SimplePromise<BufferedImage> finalResult =
-                            renderer.renderIterations(myViewer.getViewPort(), width, height, application.getExportPool())
+                            renderer.renderIterations(application.getExportPool(), myViewer.getViewPort(), width, height)
                                     .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
                     finalResult.then((image) -> {
                         try {

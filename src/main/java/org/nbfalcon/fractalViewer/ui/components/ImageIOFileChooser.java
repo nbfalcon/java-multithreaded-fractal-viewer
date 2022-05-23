@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ImageIOFileChooser extends JFileChooser {
+    // WEBP isn't supported on Java OOTB
     private static final List<FileTypeFilter> imageIOChoosers = FileTypeFilter.getSupportedFormats(
             "PNG", "JPEG", "WEBP", "GIF", "TIFF", "BMP", "WBMP");
 
