@@ -11,4 +11,9 @@ public abstract class NamedPaletteBase implements Palette {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

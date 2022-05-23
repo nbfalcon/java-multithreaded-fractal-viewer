@@ -7,6 +7,7 @@ import org.nbfalcon.fractalViewer.palette.PaletteUtil;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
 import org.nbfalcon.fractalViewer.util.ViewPort;
+import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
 
 import javax.imageio.ImageIO;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -93,6 +95,7 @@ public class FractalViewerWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 ImageExportChooser saveImageChooser = application.getExportChooser();
+                saveImageChooser.setPalette(myViewer.getPalette());
                 int result = saveImageChooser.showSaveDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String format = saveImageChooser.getImageIOFormat();
@@ -103,13 +106,19 @@ public class FractalViewerWindow extends JFrame {
                         saveTo = FileUtils.addExtension(saveTo, "png");
                     }
 
-                    final File finalSaveTo = saveTo;
+                    final File finalSaveTo = saveTo.getAbsoluteFile();
                     final String finalFormat = format;
-                    FractalRenderer renderer = (FractalRenderer) myViewer.getRenderer();
-                    renderer.renderWithCustomPool(application.getExportPool(),
-                            myViewer.getViewPort(),
-                            saveImageChooser.exportSettingsAccessory.getWidth(),
-                            saveImageChooser.exportSettingsAccessory.getHeight()).then((image) -> {
+
+                    final Palette paletteForExport = saveImageChooser.getPalette();
+                    final FractalRenderer renderer = myViewer.getFractal();
+                    final int width = saveImageChooser.exportSettingsAccessory.getWidth();
+                    final int height = saveImageChooser.exportSettingsAccessory.getHeight();
+                    final int nIter = renderer.getMaxIter();
+
+                    SimplePromise<BufferedImage> finalResult =
+                            renderer.renderIterations(myViewer.getViewPort(), width, height, application.getExportPool())
+                                    .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
+                    finalResult.then((image) -> {
                         try {
                             ImageIO.write(image, finalFormat, finalSaveTo);
                         } catch (IOException e) {

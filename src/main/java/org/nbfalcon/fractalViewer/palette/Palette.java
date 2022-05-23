@@ -28,4 +28,6 @@ public interface Palette {
      */
     SimplePromise<BufferedImage> map2Image(int[] iterMap2D, int width, int height, int maxIter,
                                            MultithreadedExecutor pool);
+
+    Palette[] EMPTY_ARRAY = new Palette[0];
 }

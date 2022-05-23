@@ -1,8 +1,13 @@
 package org.nbfalcon.fractalViewer.ui.components;
 
+import org.nbfalcon.fractalViewer.palette.Palette;
+import org.nbfalcon.fractalViewer.palette.PaletteUtil;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 public class ImageExportChooser extends ImageIOFileChooser {
@@ -10,8 +15,12 @@ public class ImageExportChooser extends ImageIOFileChooser {
     public final FileChooserAccessory exportSettingsAccessory;
     private int exportCounter = 1;
 
+    private final JComboBox<Palette> exportPalette;
+
     public ImageExportChooser() {
         setDialogTitle("Save Fractal as Image...");
+
+        exportPalette = new JComboBox<>(PaletteUtil.getAllPalettes().toArray(Palette.EMPTY_ARRAY));
 
         exportSettingsAccessory = new FileChooserAccessory();
         setAccessory(exportSettingsAccessory);
@@ -70,7 +79,14 @@ public class ImageExportChooser extends ImageIOFileChooser {
     }
 
     private void suggestFileName() {
-        setSelectedFile(new File(getFileNameForExport()));
+        File file = new File(getFileNameForExport());
+
+        File dir = getCurrentDirectory();
+        if (dir != null) {
+            file = Paths.get(dir.toString(), file.toString()).toFile();
+        }
+
+        setSelectedFile(file);
     }
 
     public class FileChooserAccessory extends JPanel {
@@ -121,15 +137,19 @@ public class ImageExportChooser extends ImageIOFileChooser {
             c.gridy = 2;
             add(heightInput, c);
 
+            c.gridy = 3;
+            c.gridx = 0;
+            add(new JLabel("Palette:"), c);
+            c.gridx = 1;
+            add(exportPalette, c);
+
             closeAfterSaving = new JCheckBox("Close after saving");
             closeAfterSaving.setToolTipText("Close this fractal viewer window after clicking 'Save'");
             c.insets = insetsDef;
             c.gridx = 0;
             c.gridwidth = 2;
-            c.gridy = 3;
+            c.gridy = 4;
             add(closeAfterSaving, c);
-
-            // FIXME: theme select here
         }
 
         private void updateParentFileName(int newWidth, int newHeight) {
@@ -158,5 +178,13 @@ public class ImageExportChooser extends ImageIOFileChooser {
         public boolean closeAfterSaving() {
             return closeAfterSaving.isSelected();
         }
+    }
+
+    public Palette getPalette() {
+        return (Palette) exportPalette.getSelectedItem();
+    }
+
+    public void setPalette(Palette palette) {
+        exportPalette.setSelectedItem(palette);
     }
 }
