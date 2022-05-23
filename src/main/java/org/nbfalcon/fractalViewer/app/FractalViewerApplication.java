@@ -47,8 +47,7 @@ public class FractalViewerApplication implements FractalViewerApplicationContext
     }
 
     public void createInitialWindow() {
-        List<FractalRenderer> allFractals = List.of(
-                new MandelbrotFractal(getRenderPool()), new JuliaFractal(getRenderPool()));
+        List<FractalRenderer> allFractals = List.of(new MandelbrotFractal(), new JuliaFractal());
         FractalViewerWindow window = new FractalViewerWindow(
                 allFractals, allFractals.get(0), BasicPalettes.GRAYSCALE, this);
         registerWindow(window, true);

@@ -7,21 +7,10 @@ import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutor;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 
 public class JuliaFractal extends FractalBase {
     private double x = -0.1;
     private double y = 0.65;
-
-    public JuliaFractal(MultithreadedExecutor threadPool) {
-        super(threadPool);
-    }
-
-    @Override
-    public SimplePromise<BufferedImage> renderWithCustomPool(MultithreadedExecutor pool, ViewPort viewPort, int width, int height) {
-        Complex juliaPoint = new Complex(x, y);
-        return renderWithCustomPool1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(xy, juliaPoint, maxIter, 10.0));
-    }
 
     @Override
     public SimplePromise<int[]> renderIterations(ViewPort viewPort, int width, int height, MultithreadedExecutor pool) {
@@ -60,7 +49,7 @@ public class JuliaFractal extends FractalBase {
     @Override
     public FractalRenderer copy() {
         // FIXME: the threadpool should not be owned by this
-        JuliaFractal copyOfMe = new JuliaFractal(threadPool);
+        JuliaFractal copyOfMe = new JuliaFractal();
         copyOfMe.x = this.x;
         copyOfMe.y = this.y;
         copyOfMe.maxIter = this.maxIter;
