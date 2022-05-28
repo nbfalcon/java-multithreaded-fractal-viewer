@@ -56,8 +56,7 @@ public class ViewPort {
         double w = getWidth(), h = getHeight();
         double mw = main.getWidth(), mh = main.getHeight();
 
-        double nx1 = x1 - main.x1, ny1 = y1 - main.y1;
-        return new ViewPort(nx1, ny1, nx1 + mw / w, ny1 + mh / h);
+        return new ViewPort(x1 - main.x1, y1 - main.y1, x1 + w / mw, h / mh);
     }
 
     public ViewPort sort() {

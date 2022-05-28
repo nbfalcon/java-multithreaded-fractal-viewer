@@ -27,6 +27,8 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
     private volatile @NotNull Palette selectedPalette;
     private boolean settingDeriveMaxIter = false;
 
+    private float lastMouseX = -1.0f, lastMouseY = -1.0f;
+
     public FractalAsyncImageViewer(FractalViewerApplicationContext application, @NotNull FractalRenderer initialFractal, @NotNull Palette initialPalette) {
         super();
 
@@ -47,6 +49,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
                 return fractalResult.flatMap((indexMap) -> {
                     final FractalResult result = new FractalResult(indexMap, width, height, maxIter);
                     last = result;
+                    SwingUtilities.invokeLater(FractalAsyncImageViewer.this::updateAtCursorForMousePosition);
                     return queuePaletteRerender(result);
                 });
             }
@@ -60,14 +63,13 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         bottomInfoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 8));
         add(bottomInfoPanel, BorderLayout.PAGE_END);
         bottomInfoPanel.add(atCursor, BorderLayout.LINE_END);
-        Point mouse = getMousePosition();
-        if (mouse != null) {
-            atCursorTextForMouseMove(mouse.getX(), mouse.getY());
-        }
+        updateAtCursorForMousePosition();
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                atCursorTextForMouseMove(e.getX(), e.getY());
+                updateAtCursorTextForMouseMove(e.getX(), e.getY());
+                lastMouseX = (float) e.getX() / getWidth();
+                lastMouseY = (float) e.getY() / getHeight();
             }
         });
     }
@@ -86,6 +88,15 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         return trimMe.substring(0, tail);
     }
 
+    private void updateAtCursorForMousePosition() {
+        Point mouse = getMousePosition();
+        if (mouse != null) {
+            updateAtCursorTextForMouseMove((int) mouse.getX(), (int) mouse.getY());
+        } else if ((int) lastMouseX >= 0 && (int) lastMouseY >= 0) {
+            updateAtCursorTextForMouseMove((int) lastMouseX * getWidth(), (int) lastMouseY * getHeight());
+        }
+    }
+
     public boolean getSettingShowCursorInfo() {
         return bottomInfoPanel.isVisible();
     }
@@ -94,18 +105,18 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         bottomInfoPanel.setVisible(show);
     }
 
-    private void atCursorTextForMouseMove(double x, double y) {
-        if ((int) x > getWidth() || (int) y > getHeight()) return;
+    private void updateAtCursorTextForMouseMove(int x, int y) {
+        if (x > getWidth() || y > getHeight()) return;
 
         ViewPort vp = getViewPort();
-        double re = vp.getX(x / getWidth());
-        double im = vp.getY(y / getHeight());
+        double re = vp.getX((double) x / getWidth());
+        double im = vp.getY((double) y / getHeight());
         String pos = formatComplex(new Complex(re, im));
 
         FractalResult lastRender = last;
         String nIter = "";
         if (lastRender != null) {
-            nIter = ",n=" + lastRender.indexMap[(int) y * getWidth() + (int) x];
+            nIter = ",n=" + lastRender.indexMap[y * getWidth() + x];
         }
 
         atCursor.setText(pos + nIter);
