@@ -18,6 +18,7 @@ public class AsyncImageViewer extends JPanel {
     private static final ViewPort DEFAULT_VIEWPORT = new ViewPort(-2.0, 2.0, 2.0, -2.0);
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
     private final AbstractAction cancelSelectionAction;
+    private final LatestPromise cancelRedraw = new LatestPromise();
     public Consumer<ViewPort> createNewWindowWithViewportUserAction;
     private AsyncImageRenderer renderer;
     private boolean havePressedSelection = false;
@@ -25,9 +26,9 @@ public class AsyncImageViewer extends JPanel {
     private boolean settingSquareSelection;
     private boolean settingCompensateAspectRatio;
     private ViewPort curViewPort;
-    private final LatestPromise cancelRedraw = new LatestPromise();
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
+
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
         super();
 
@@ -87,7 +88,7 @@ public class AsyncImageViewer extends JPanel {
             public void mouseDragged(MouseEvent mouseEvent) {
                 if (havePressedSelection) {
                     double x = getX(mouseEvent), y = getY(mouseEvent);
-                    if (settingSquareSelection || (mouseEvent.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0) {
+                    if (getSettingSquareSelection() || (mouseEvent.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0) {
                         double dx = x - selection.x1, dy = y - selection.y1;
                         double deltaMax = Math.max(Math.abs(dx), Math.abs(dy));
                         double dxM = dx < 0 ? -deltaMax : deltaMax;
@@ -172,7 +173,7 @@ public class AsyncImageViewer extends JPanel {
     }
 
     public AsyncImageViewer(AsyncImageRenderer renderer) {
-        this(renderer, false, true, getDefaultViewport());
+        this(renderer, true, true, getDefaultViewport());
     }
 
     /**
@@ -182,25 +183,18 @@ public class AsyncImageViewer extends JPanel {
         this(null);
     }
 
+    public static ViewPort getDefaultViewport() {
+        return DEFAULT_VIEWPORT.copy();
+    }
+
     public void injectRenderer(AsyncImageRenderer renderer) {
         if (this.renderer == null) {
             this.renderer = renderer;
         }
     }
 
-    public static ViewPort getDefaultViewport() {
-        return DEFAULT_VIEWPORT.copy();
-    }
-
     public AsyncImageRenderer getRenderer() {
         return renderer;
-    }
-
-    public void setRenderer(AsyncImageRenderer renderer) {
-        if (renderer != this.renderer) {
-            this.renderer = renderer;
-            redrawAsync();
-        }
     }
 
     public boolean getSettingSquareSelection() {
@@ -262,6 +256,8 @@ public class AsyncImageViewer extends JPanel {
 
             g.drawRect((int) Math.round(rx1 * getWidth()), (int) Math.round(ry1 * getHeight()), (int) Math.round(w * getWidth()), (int) Math.round(h * getHeight()));
         }
+
+        super.paintChildren(g);
     }
 
     public void updateImage(BufferedImage image) {

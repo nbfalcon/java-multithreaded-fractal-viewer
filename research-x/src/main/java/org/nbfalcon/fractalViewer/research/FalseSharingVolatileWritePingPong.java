@@ -11,8 +11,6 @@ public class FalseSharingVolatileWritePingPong {
 
     public static void main(String[] args) {
         for (int i = 0; i < 100; i++) {
-//            timeIt("Shared", FalseSharingVolatileWrites::sharedPingPong);
-//            timeIt("Unshared", FalseSharingVolatileWrites::unsharedPingPong);
             unsharedPingPong();
             sharedPingPong();
         }

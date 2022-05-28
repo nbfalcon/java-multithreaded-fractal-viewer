@@ -30,8 +30,26 @@ public class ViewPort {
         return x2 - x1;
     }
 
+    public ViewPort setWidth(double newWidth) {
+        double dw = newWidth - getWidth();
+        return new ViewPort(x1 - dw / 2, y1, x2 + dw / 2, y2 / 2);
+    }
+
     public double getHeight() {
         return y2 - y1;
+    }
+
+    public ViewPort setHeight(double newHeight) {
+        double dh = newHeight - getHeight();
+        return new ViewPort(x1, y1 - dh / 2, x2, y2 + dh / 2);
+    }
+
+    public double getX(double x) {
+        return x1 + getWidth() * x;
+    }
+
+    public double getY(double y) {
+        return y1 + getHeight() * y;
     }
 
     public ViewPort relativeTo(ViewPort main) {
@@ -80,16 +98,6 @@ public class ViewPort {
     public ViewPort stretchY(double sy) {
         double dnh = getHeight() * (sy - 1.0) / 2;
         return new ViewPort(x1, y1 - dnh, x2, y2 + dnh);
-    }
-
-    public ViewPort setWidth(double newWidth) {
-        double dw = newWidth - getWidth();
-        return new ViewPort(x1 - dw / 2, y1, x2 + dw / 2, y2 / 2);
-    }
-
-    public ViewPort setHeight(double newHeight) {
-        double dh = newHeight - getHeight();
-        return new ViewPort(x1, y1 - dh / 2, x2, y2 + dh / 2);
     }
 
     public void setFrom(ViewPort other) {

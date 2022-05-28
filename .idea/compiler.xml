@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <option name="USE_RELEASE_OPTION" value="false" />
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="research-x" />
         <module name="java-fractal-viewer-additional-tests" />
-        <module name="java-fractal-viewer" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="java-fractal-viewer" target="11" />
-      <module name="java-fractal-viewer-additional-tests" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="java-fractal-viewer-additional-tests" options="--add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED" />
+      <module name="java-fractal-viewer" options="--release" />
+      <module name="research-x" options="--add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED" />
     </option>
   </component>
 </project>

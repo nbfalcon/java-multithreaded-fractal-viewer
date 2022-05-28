@@ -20,7 +20,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -237,6 +236,16 @@ public class FractalViewerWindow extends JFrame {
             }
         });
         view.add(squarifyPerspective);
+        JMenuItem squarifyWindow = new JMenuItem(new AbstractAction("Make Window Square") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int size = Math.min(myViewer.getWidth(), myViewer.getHeight());
+                myViewer.setSize(size, size);
+                // Compensate menu bar
+                FractalViewerWindow.this.pack();
+            }
+        });
+        view.add(squarifyWindow);
         JCheckBoxMenuItem forceSquareSelection = new JCheckBoxMenuItem("Always Use Square Selection");
         SwingUtilitiesX.dataBind(forceSquareSelection,
                 myViewer::getSettingSquareSelection, myViewer::setSettingSquareSelection);
@@ -245,6 +254,10 @@ public class FractalViewerWindow extends JFrame {
         SwingUtilitiesX.dataBind(compensateAspectRatio,
                 myViewer::getSettingCompensateAspectRatio, myViewer::setSettingCompensateAspectRatio);
         view.add(compensateAspectRatio);
+        JCheckBoxMenuItem showCursorInfo = new JCheckBoxMenuItem("Show position at cursor");
+        showCursorInfo.setToolTipText("Show the position and maximum iteration of the rendering at the cursor position.");
+        SwingUtilitiesX.dataBind(showCursorInfo, myViewer::getSettingShowCursorInfo, myViewer::setSettingShowCursorInfo);
+        view.add(showCursorInfo);
         JCheckBoxMenuItem deriveMaxIter = new JCheckBoxMenuItem("Derive MaxIter");
         deriveMaxIter.setToolTipText("Derive the actual maximum iteration count from the rendering.\n" +
                 "This option was mainly an experiment; in practice, it will only make a slight difference when zoomed in.");
