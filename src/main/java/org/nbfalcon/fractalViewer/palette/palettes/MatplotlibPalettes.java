@@ -12,7 +12,7 @@ import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class MatplotlibPalettes {
-    private static final ListedColormap VIRIDIS = new ListedColormap("VIRIDIS",
+    public static final ListedColormap VIRIDIS = new ListedColormap("VIRIDIS",
         new float[][]{
                 new float[]{
                         0.267004f,
@@ -1296,7 +1296,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final ListedColormap PLASMA = new ListedColormap("PLASMA",
+    public static final ListedColormap PLASMA = new ListedColormap("PLASMA",
         new float[][]{
                 new float[]{
                         0.050383f,
@@ -2580,7 +2580,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final ListedColormap INFERNO = new ListedColormap("INFERNO",
+    public static final ListedColormap INFERNO = new ListedColormap("INFERNO",
         new float[][]{
                 new float[]{
                         0.001462f,
@@ -3864,7 +3864,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final ListedColormap MAGMA = new ListedColormap("MAGMA",
+    public static final ListedColormap MAGMA = new ListedColormap("MAGMA",
         new float[][]{
                 new float[]{
                         0.001462f,
@@ -5148,7 +5148,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final ListedColormap CIVIDIS = new ListedColormap("CIVIDIS",
+    public static final ListedColormap CIVIDIS = new ListedColormap("CIVIDIS",
         new float[][]{
                 new float[]{
                         0.0f,
@@ -6432,7 +6432,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap GREYS = new LinearSegmentedColormap("GREYS",
+    public static final LinearSegmentedColormap GREYS = new LinearSegmentedColormap("GREYS",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -6575,7 +6575,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PURPLES = new LinearSegmentedColormap("PURPLES",
+    public static final LinearSegmentedColormap PURPLES = new LinearSegmentedColormap("PURPLES",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -6718,7 +6718,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap BLUES = new LinearSegmentedColormap("BLUES",
+    public static final LinearSegmentedColormap BLUES = new LinearSegmentedColormap("BLUES",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -6861,7 +6861,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap GREENS = new LinearSegmentedColormap("GREENS",
+    public static final LinearSegmentedColormap GREENS = new LinearSegmentedColormap("GREENS",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7004,7 +7004,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap ORANGES = new LinearSegmentedColormap("ORANGES",
+    public static final LinearSegmentedColormap ORANGES = new LinearSegmentedColormap("ORANGES",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7147,7 +7147,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap REDS = new LinearSegmentedColormap("REDS",
+    public static final LinearSegmentedColormap REDS = new LinearSegmentedColormap("REDS",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7290,7 +7290,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap YLORBR = new LinearSegmentedColormap("YLORBR",
+    public static final LinearSegmentedColormap YLORBR = new LinearSegmentedColormap("YLORBR",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7433,7 +7433,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap YLORRD = new LinearSegmentedColormap("YLORRD",
+    public static final LinearSegmentedColormap YLORRD = new LinearSegmentedColormap("YLORRD",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7576,7 +7576,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap ORRD = new LinearSegmentedColormap("ORRD",
+    public static final LinearSegmentedColormap ORRD = new LinearSegmentedColormap("ORRD",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7719,7 +7719,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PURD = new LinearSegmentedColormap("PURD",
+    public static final LinearSegmentedColormap PURD = new LinearSegmentedColormap("PURD",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -7862,7 +7862,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap RDPU = new LinearSegmentedColormap("RDPU",
+    public static final LinearSegmentedColormap RDPU = new LinearSegmentedColormap("RDPU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8005,7 +8005,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap BUPU = new LinearSegmentedColormap("BUPU",
+    public static final LinearSegmentedColormap BUPU = new LinearSegmentedColormap("BUPU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8148,7 +8148,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap GNBU = new LinearSegmentedColormap("GNBU",
+    public static final LinearSegmentedColormap GNBU = new LinearSegmentedColormap("GNBU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8291,7 +8291,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PUBU = new LinearSegmentedColormap("PUBU",
+    public static final LinearSegmentedColormap PUBU = new LinearSegmentedColormap("PUBU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8434,7 +8434,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap YLGNBU = new LinearSegmentedColormap("YLGNBU",
+    public static final LinearSegmentedColormap YLGNBU = new LinearSegmentedColormap("YLGNBU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8577,7 +8577,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PUBUGN = new LinearSegmentedColormap("PUBUGN",
+    public static final LinearSegmentedColormap PUBUGN = new LinearSegmentedColormap("PUBUGN",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8720,7 +8720,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap BUGN = new LinearSegmentedColormap("BUGN",
+    public static final LinearSegmentedColormap BUGN = new LinearSegmentedColormap("BUGN",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -8863,7 +8863,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap YLGN = new LinearSegmentedColormap("YLGN",
+    public static final LinearSegmentedColormap YLGN = new LinearSegmentedColormap("YLGN",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -9006,7 +9006,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PIYG = new LinearSegmentedColormap("PIYG",
+    public static final LinearSegmentedColormap PIYG = new LinearSegmentedColormap("PIYG",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -9179,7 +9179,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PRGN = new LinearSegmentedColormap("PRGN",
+    public static final LinearSegmentedColormap PRGN = new LinearSegmentedColormap("PRGN",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -9352,7 +9352,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap BRBG = new LinearSegmentedColormap("BRBG",
+    public static final LinearSegmentedColormap BRBG = new LinearSegmentedColormap("BRBG",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -9525,7 +9525,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap PUOR = new LinearSegmentedColormap("PUOR",
+    public static final LinearSegmentedColormap PUOR = new LinearSegmentedColormap("PUOR",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -9698,7 +9698,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap RDGY = new LinearSegmentedColormap("RDGY",
+    public static final LinearSegmentedColormap RDGY = new LinearSegmentedColormap("RDGY",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -9871,7 +9871,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap RDBU = new LinearSegmentedColormap("RDBU",
+    public static final LinearSegmentedColormap RDBU = new LinearSegmentedColormap("RDBU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -10044,7 +10044,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap RDYLBU = new LinearSegmentedColormap("RDYLBU",
+    public static final LinearSegmentedColormap RDYLBU = new LinearSegmentedColormap("RDYLBU",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -10217,7 +10217,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap RDYLGN = new LinearSegmentedColormap("RDYLGN",
+    public static final LinearSegmentedColormap RDYLGN = new LinearSegmentedColormap("RDYLGN",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -10390,7 +10390,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap SPECTRAL = new LinearSegmentedColormap("SPECTRAL",
+    public static final LinearSegmentedColormap SPECTRAL = new LinearSegmentedColormap("SPECTRAL",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -10563,7 +10563,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap COOLWARM = new LinearSegmentedColormap("COOLWARM",
+    public static final LinearSegmentedColormap COOLWARM = new LinearSegmentedColormap("COOLWARM",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -11066,7 +11066,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap BWR = new LinearSegmentedColormap("BWR",
+    public static final LinearSegmentedColormap BWR = new LinearSegmentedColormap("BWR",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,
@@ -11119,7 +11119,7 @@ public class MatplotlibPalettes {
                 },
         });
 
-    private static final LinearSegmentedColormap SEISMIC = new LinearSegmentedColormap("SEISMIC",
+    public static final LinearSegmentedColormap SEISMIC = new LinearSegmentedColormap("SEISMIC",
         /* red: */ new float[][]{
                 new float[]{
                         0.0f,

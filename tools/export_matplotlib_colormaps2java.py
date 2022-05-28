@@ -68,7 +68,7 @@ class SourceWriter:
 
 def print_colormap(cm, writer: SourceWriter):
     name = cm.name.upper()
-    writer.write("private static final ")
+    writer.write("public static final ")
     if isinstance(cm, ListedColormap):
         writer.write(f"ListedColormap {name} = new ListedColormap(\"{name}\",\n")
         with writer.indented():
@@ -140,7 +140,7 @@ import java.util.List;
     writer.writeln(");")
     writer.writeln("}")
 
-    with open(os.path.join(os.path.dirname(__file__), "..", "src", package.replace(".", "/"), clazz + ".java"), 'w') as out:
+    with open(os.path.join(os.path.dirname(__file__), "..", "src/main/java/", package.replace(".", "/"), clazz + ".java"), 'w') as out:
         out.write(str(writer))
     print(writer, end="")
 
