@@ -22,10 +22,6 @@ public class ViewPort {
         return viewPort.x1 == x1 && viewPort.y1 == y1 && viewPort.x2 == x2 && viewPort.y2 == y2;
     }
 
-//    public boolean equals(ViewPort other) {
-//        return feq(x1, other.x1) && feq(x2, other.x2) && feq(y1, other.y1) && feq(y2, other.y2);
-//    }
-
     public double getWidth() {
         return x2 - x1;
     }
@@ -52,11 +48,16 @@ public class ViewPort {
         return y1 + getHeight() * y;
     }
 
+    /**
+     * Inverse function of {@link #slice(ViewPort)}.
+     * @return main.slice([result]) = this
+     */
     public ViewPort relativeTo(ViewPort main) {
-        double w = getWidth(), h = getHeight();
-        double mw = main.getWidth(), mh = main.getHeight();
-
-        return new ViewPort(x1 - main.x1, y1 - main.y1, x1 + w / mw, h / mh);
+        return new ViewPort(
+                (this.x1 - main.x1) / main.getWidth(),
+                (this.y1 - main.y1) / main.getHeight(),
+                (this.x2 - main.x1) / main.getWidth(),
+                (this.y2 - main.y1) / main.getHeight());
     }
 
     public ViewPort sort() {
@@ -71,8 +72,12 @@ public class ViewPort {
         return new ViewPort(x1 + dx * getWidth(), y1 + dy * getHeight(), x2 + dx * getWidth(), y2 + dy * getHeight());
     }
 
-    public ViewPort slice(ViewPort which) {
-        return new ViewPort(x1 + getWidth() * which.x1, y1 + getHeight() * which.y1, x1 + getWidth() * which.x2, y1 + getHeight() * which.y2);
+    public ViewPort slice(ViewPort theSlice) {
+        return new ViewPort(
+                x1 + getWidth() * theSlice.x1,
+                y1 + getHeight() * theSlice.y1,
+                x1 + getWidth() * theSlice.x2,
+                y1 + getHeight() * theSlice.y2);
     }
 
     public ViewPort zoomIn(double scale) {
@@ -105,8 +110,4 @@ public class ViewPort {
         this.y1 = other.y1;
         this.y2 = other.y2;
     }
-
-//    private static boolean feq(double a, double b) {
-//        return Math.abs(a - b) < 0.0001;
-//    }
 }

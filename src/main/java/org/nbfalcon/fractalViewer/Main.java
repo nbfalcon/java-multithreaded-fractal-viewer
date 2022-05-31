@@ -4,9 +4,6 @@ import org.nbfalcon.fractalViewer.app.FractalViewerApplication;
 
 import javax.swing.*;
 
-// FIXME: incrementally recompute fractals while scrolling (option)
-// FIXME: incrementally blit fractals (scale the image) (option)
-// FIXME: coalesce scroll events
 // FIXME: more fractals: fractal selection
 // FIXME: live zooming
 // FIXME: settings: how many threads?

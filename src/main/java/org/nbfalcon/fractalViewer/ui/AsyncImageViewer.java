@@ -187,6 +187,22 @@ public class AsyncImageViewer extends JPanel {
         return DEFAULT_VIEWPORT.copy();
     }
 
+    private static BufferedImage sliceImage(BufferedImage sliceMe, ViewPort whichSlice) {
+        // Without round, the image ends up jumping by a pixel once the fractal re-renders at the new
+        // viewport. This is ever so *slightly* jarring.
+        int x = Math.max(0, (int) Math.round(whichSlice.x1 * sliceMe.getWidth()));
+        int y = Math.max(0, (int) Math.round(whichSlice.y1 * sliceMe.getHeight()));
+
+        int width = Math.min(sliceMe.getWidth() - x, (int) Math.round(whichSlice.getWidth() * sliceMe.getWidth()));
+        int height = Math.min(sliceMe.getHeight() - y, (int) Math.round(whichSlice.getHeight() * sliceMe.getHeight()));
+
+        // width & height > 0 implies x & y are in bounds, due to the min above
+        if (width <= 0 || height <= 0) return null;
+
+        // FIXME: this works only for zooming in
+        return sliceMe.getSubimage(x, y, width, height);
+    }
+
     public void injectRenderer(AsyncImageRenderer renderer) {
         if (this.renderer == null) {
             this.renderer = renderer;
@@ -224,6 +240,8 @@ public class AsyncImageViewer extends JPanel {
     public void setViewPort(ViewPort myViewPort) {
         this.curViewPort = myViewPort;
         redrawAsync();
+        // Redraw now, since we can at least scale the image incrementally while waiting for the full render
+        repaint();
     }
 
     private double getX(MouseEvent mouseEvent) {
@@ -239,14 +257,17 @@ public class AsyncImageViewer extends JPanel {
         super.paintComponent(g);
 
         if (bestImage != null) {
-//            ViewPort imViewPortR = bestImage.viewPort.relativeTo(myViewPort);
-            g.drawImage(bestImage.image, 0, 0, null);
-//            g.drawImage(bestImage.image,
-//                    (int) Math.round(imViewPortR.x1 * getWidth()),
-//                    (int) Math.round(imViewPortR.y1 * getHeight()),
-//                    (int) Math.round(imViewPortR.x2 * getWidth()),
-//                    (int) Math.round(imViewPortR.y2 * getHeight()),
-//                    null);
+            if (bestImage.viewPort.equals(curViewPort)) {
+                g.drawImage(bestImage.image, 0, 0, getWidth(), getHeight(), null);
+            } else {
+                ViewPort imViewPortR = curViewPort.relativeTo(bestImage.viewPort);
+                BufferedImage slice = sliceImage(bestImage.image, imViewPortR);
+                if (slice != null) {
+                    g.drawImage(slice, 0, 0, getWidth(), getHeight(), null);
+                } else {
+                    g.drawImage(bestImage.image, 0, 0, getWidth(), getHeight(), null);
+                }
+            }
         }
 
         if (haveSelection) {
