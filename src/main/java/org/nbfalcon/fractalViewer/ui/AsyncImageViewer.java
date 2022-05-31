@@ -109,10 +109,19 @@ public class AsyncImageViewer extends JPanel {
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
-                if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) != 0) {
-                    setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
-                } else {
-                    setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
+                if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.CTRL_DOWN_MASK) {
+                    double wheel = mouseWheelEvent.getPreciseWheelRotation();
+                    setViewPort(wheel > 0
+                            ? curViewPort.zoomOut(1.0 + wheel * 0.5)
+                            : curViewPort.zoomIn(1.0 + -wheel * 0.5));
+                }
+                else {
+                    // Up-Down or Left-Right
+                    if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
+                        setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
+                    } else {
+                        setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
+                    }
                 }
             }
         });
