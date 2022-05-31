@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 public class AsyncImageViewer extends JPanel {
     public static final double S_ZOOM_SCALE = 2;
     public static final double S_MOUSEWHEEL_ZOOM_SPEED = 0.5;
+    public static final double S_MOUSEWHEEL_PAN_SPEED = 0.1;
 
     /**
      * The default viewport used by new image viewers.
@@ -69,9 +70,9 @@ public class AsyncImageViewer extends JPanel {
                 } else {
                     // Up-Down or Left-Right
                     if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
-                        setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
+                        setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * S_MOUSEWHEEL_PAN_SPEED, 0.0));
                     } else {
-                        setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
+                        setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * S_MOUSEWHEEL_PAN_SPEED));
                     }
                 }
             }
