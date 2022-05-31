@@ -12,9 +12,8 @@ import java.util.prefs.Preferences;
 public class ImageExportChooser extends ImageIOFileChooser {
     private static final String LAST_BROWSED_DIR_PREF = "org.nbfalcon.fractalViewer/ui.components.ImageExportChooser.LAST_BROWSED_DIR";
     public final FileChooserAccessory exportSettingsAccessory;
-    private int exportCounter = 1;
-
     private final JComboBox<Palette> exportPalette;
+    private int exportCounter = 1;
 
     public ImageExportChooser() {
         setDialogTitle("Save Fractal as Image...");
@@ -86,6 +85,14 @@ public class ImageExportChooser extends ImageIOFileChooser {
         }
 
         setSelectedFile(file);
+    }
+
+    public Palette getPalette() {
+        return (Palette) exportPalette.getSelectedItem();
+    }
+
+    public void setPalette(Palette palette) {
+        exportPalette.setSelectedItem(palette);
     }
 
     public class FileChooserAccessory extends JPanel {
@@ -177,13 +184,5 @@ public class ImageExportChooser extends ImageIOFileChooser {
         public boolean closeAfterSaving() {
             return closeAfterSaving.isSelected();
         }
-    }
-
-    public Palette getPalette() {
-        return (Palette) exportPalette.getSelectedItem();
-    }
-
-    public void setPalette(Palette palette) {
-        exportPalette.setSelectedItem(palette);
     }
 }

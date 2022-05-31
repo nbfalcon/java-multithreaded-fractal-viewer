@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 /**
  * Implements a SimplePromise's map/flatMap with a single-completion presumption:
- *
+ * <p>
  * The promise is not a stream that can be completed multiple times, but has a 0 or 1 results, some time in the future;
  * intermediate results are cached (that is: mappers aren't ever called more than once).
  */

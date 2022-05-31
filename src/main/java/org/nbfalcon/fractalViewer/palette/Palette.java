@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.function.Function;
 
 public interface Palette {
+    Palette[] EMPTY_ARRAY = new Palette[0];
+
     static SimplePromise<BufferedImage> map2Image1(int[] iterMap2D, int width, int height, int maxIter,
                                                    MultithreadedExecutor pool, Function<Float, int[]> colorizer) {
 
@@ -28,6 +30,4 @@ public interface Palette {
      */
     SimplePromise<BufferedImage> map2Image(int[] iterMap2D, int width, int height, int maxIter,
                                            MultithreadedExecutor pool);
-
-    Palette[] EMPTY_ARRAY = new Palette[0];
 }

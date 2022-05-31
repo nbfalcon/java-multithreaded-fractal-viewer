@@ -114,8 +114,7 @@ public class AsyncImageViewer extends JPanel {
                     setViewPort(wheel > 0
                             ? curViewPort.zoomOut(1.0 + wheel * 0.5)
                             : curViewPort.zoomIn(1.0 + -wheel * 0.5));
-                }
-                else {
+                } else {
                     // Up-Down or Left-Right
                     if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
                         setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));

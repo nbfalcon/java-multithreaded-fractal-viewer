@@ -21,46 +21,6 @@ public class ImageIOFileChooser extends JFileChooser {
         }
     }
 
-    public static class FileTypeFilter extends FileFilter {
-        public final String formatName;
-        public final String primarySuffix;
-
-        private final String description;
-        final Set<String> extensions;
-
-        public static List<FileTypeFilter> getSupportedFormats(String... formats) {
-            List<FileTypeFilter> result = new ArrayList<>();
-            for (String format : formats) {
-                ImageIO.getImageWritersByFormatName(format).forEachRemaining(writer -> {
-                    String[] suffixes = writer.getOriginatingProvider().getFileSuffixes();
-                    result.add(new FileTypeFilter(format, suffixes));
-                });
-            }
-            return result;
-        }
-
-        public FileTypeFilter(String formatName, String... extensions) {
-            this.formatName = formatName;
-            this.primarySuffix = extensions.length == 0 ? null : extensions[0];
-
-            this.extensions = Set.of(extensions);
-
-            String extensionsS = Arrays.stream(extensions).map(ext -> "." + ext).collect(Collectors.joining(", "));
-            this.description = formatName + " (" + extensionsS + ")";
-        }
-
-        @Override
-        public boolean accept(File file) {
-            String extension = FileUtils.getExtension(file);
-            return extension != null && this.extensions.contains(extension);
-        }
-
-        @Override
-        public String getDescription() {
-            return this.description;
-        }
-    }
-
     private FileTypeFilter getSelectedImageFormat() {
         FileFilter selected = getFileFilter();
         return selected instanceof FileTypeFilter ? (FileTypeFilter) selected : null;
@@ -100,5 +60,44 @@ public class ImageIOFileChooser extends JFileChooser {
             }
         }
         return selectedFile;
+    }
+
+    public static class FileTypeFilter extends FileFilter {
+        public final String formatName;
+        public final String primarySuffix;
+        final Set<String> extensions;
+        private final String description;
+
+        public FileTypeFilter(String formatName, String... extensions) {
+            this.formatName = formatName;
+            this.primarySuffix = extensions.length == 0 ? null : extensions[0];
+
+            this.extensions = Set.of(extensions);
+
+            String extensionsS = Arrays.stream(extensions).map(ext -> "." + ext).collect(Collectors.joining(", "));
+            this.description = formatName + " (" + extensionsS + ")";
+        }
+
+        public static List<FileTypeFilter> getSupportedFormats(String... formats) {
+            List<FileTypeFilter> result = new ArrayList<>();
+            for (String format : formats) {
+                ImageIO.getImageWritersByFormatName(format).forEachRemaining(writer -> {
+                    String[] suffixes = writer.getOriginatingProvider().getFileSuffixes();
+                    result.add(new FileTypeFilter(format, suffixes));
+                });
+            }
+            return result;
+        }
+
+        @Override
+        public boolean accept(File file) {
+            String extension = FileUtils.getExtension(file);
+            return extension != null && this.extensions.contains(extension);
+        }
+
+        @Override
+        public String getDescription() {
+            return this.description;
+        }
     }
 }

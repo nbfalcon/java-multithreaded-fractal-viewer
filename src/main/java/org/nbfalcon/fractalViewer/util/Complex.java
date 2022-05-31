@@ -44,6 +44,13 @@ public class Complex {
         im = imag;
     }
 
+    // a static version of plus
+    public static Complex add(Complex a, Complex b) {
+        double real = a.re + b.re;
+        double imag = a.im + b.im;
+        return new Complex(real, imag);
+    }
+
     // return a string representation of the invoking Complex object
     public String toString() {
         if (im == 0) return re + "";
@@ -139,14 +146,6 @@ public class Complex {
     // return a new Complex object whose value is the complex tangent of this
     public Complex tan() {
         return sin().divide(cos());
-    }
-
-
-    // a static version of plus
-    public static Complex add(Complex a, Complex b) {
-        double real = a.re + b.re;
-        double imag = a.im + b.im;
-        return new Complex(real, imag);
     }
 
     // See Section 3.3.

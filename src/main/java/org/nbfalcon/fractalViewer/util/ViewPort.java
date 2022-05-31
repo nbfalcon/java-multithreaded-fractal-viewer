@@ -50,6 +50,7 @@ public class ViewPort {
 
     /**
      * Inverse function of {@link #slice(ViewPort)}.
+     *
      * @return main.slice([result]) = this
      */
     public ViewPort relativeTo(ViewPort main) {

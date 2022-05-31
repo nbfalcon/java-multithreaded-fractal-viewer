@@ -1,7 +1,5 @@
 package org.nbfalcon.fractalViewer.util.concurrent;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +32,8 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
                 // Ensure task.execute()'s changes are flushed to memory before completing the handle;
                 // read and write barrier
                 //noinspection EmptySynchronizedStatement
-                synchronized (taskRWFence) {}
+                synchronized (taskRWFence) {
+                }
                 if (countDown.decrementAndGet() == 0) {
                     handle.complete(null);
                 }
@@ -42,6 +41,25 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
         })).collect(Collectors.toList());
 
         return handle;
+    }
+
+    @Override
+    public <T> SimplePromise<T> submit(Callable<T> task) {
+        SubmitHandle1Impl<T> result = new SubmitHandle1Impl<>();
+
+        result.cancel = myExecutorService.submit(() -> {
+            try {
+                result.complete(task.call());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return result;
+    }
+
+    public ExecutorService getExecutorService() {
+        return myExecutorService;
     }
 
     private static class SubmitHandleImpl extends CompletableSimplePromiseBase<Void> {
@@ -63,24 +81,5 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
             cancel.cancel(true);
             cancel = null;
         }
-    }
-
-    @Override
-    public <T> SimplePromise<T> submit(Callable<T> task) {
-        SubmitHandle1Impl<T> result = new SubmitHandle1Impl<>();
-
-        result.cancel = myExecutorService.submit(() -> {
-            try {
-                result.complete(task.call());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        return result;
-    }
-
-    public ExecutorService getExecutorService() {
-        return myExecutorService;
     }
 }
