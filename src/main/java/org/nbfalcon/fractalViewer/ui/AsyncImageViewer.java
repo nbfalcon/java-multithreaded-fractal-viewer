@@ -1,5 +1,6 @@
 package org.nbfalcon.fractalViewer.ui;
 
+import org.jetbrains.annotations.Nullable;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.LatestPromise;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
@@ -187,20 +188,29 @@ public class AsyncImageViewer extends JPanel {
         return DEFAULT_VIEWPORT.copy();
     }
 
-    private static BufferedImage sliceImage(BufferedImage sliceMe, ViewPort whichSlice) {
+    private static @Nullable SliceImageResult sliceImage(BufferedImage sliceMe, ViewPort whichSlice) {
         // Without round, the image ends up jumping by a pixel once the fractal re-renders at the new
         // viewport. This is ever so *slightly* jarring.
-        int x = Math.max(0, (int) Math.round(whichSlice.x1 * sliceMe.getWidth()));
-        int y = Math.max(0, (int) Math.round(whichSlice.y1 * sliceMe.getHeight()));
+        int rawX = (int) Math.round(whichSlice.x1 * sliceMe.getWidth());
+        int rawY = (int) Math.round(whichSlice.y1 * sliceMe.getHeight());
+        int x = Math.max(0, rawX), y = Math.max(0, rawY);
 
-        int width = Math.min(sliceMe.getWidth() - x, (int) Math.round(whichSlice.getWidth() * sliceMe.getWidth()));
-        int height = Math.min(sliceMe.getHeight() - y, (int) Math.round(whichSlice.getHeight() * sliceMe.getHeight()));
+        int rawWidth = (int) Math.round(whichSlice.getWidth() * sliceMe.getWidth());
+        int maxWidth = sliceMe.getWidth() - x;
+        int width = Math.min(maxWidth, rawWidth);
+        int rawHeight = (int) Math.round(whichSlice.getHeight() * sliceMe.getHeight());
+        int maxHeight = sliceMe.getHeight() - y;
+        int height = Math.min(maxHeight, rawHeight);
 
         // width & height > 0 implies x & y are in bounds, due to the min above
         if (width <= 0 || height <= 0) return null;
 
-        // FIXME: this works only for zooming in
-        return sliceMe.getSubimage(x, y, width, height);
+        return new SliceImageResult(
+                sliceMe.getSubimage(x, y, width, height),
+                -Math.min(0, rawX), -Math.min(0, rawY),
+                // Negative if we had to clip on rhs
+                Math.max(0, rawWidth - maxWidth),
+                Math.max(0, rawHeight - maxHeight));
     }
 
     public void injectRenderer(AsyncImageRenderer renderer) {
@@ -261,9 +271,12 @@ public class AsyncImageViewer extends JPanel {
                 g.drawImage(bestImage.image, 0, 0, getWidth(), getHeight(), null);
             } else {
                 ViewPort imViewPortR = curViewPort.relativeTo(bestImage.viewPort);
-                BufferedImage slice = sliceImage(bestImage.image, imViewPortR);
-                if (slice != null) {
-                    g.drawImage(slice, 0, 0, getWidth(), getHeight(), null);
+                SliceImageResult slice = sliceImage(bestImage.image, imViewPortR);
+                if (slice != null && !slice.isZoomOut()) {
+                    g.drawImage(
+                            slice.image, slice.offX, slice.offY,
+                            getWidth() - slice.deltaClipWidth, getHeight() - slice.deltaClipHeight,
+                            null);
                 } else {
                     g.drawImage(bestImage.image, 0, 0, getWidth(), getHeight(), null);
                 }
@@ -335,6 +348,26 @@ public class AsyncImageViewer extends JPanel {
 
     public interface AsyncImageRenderer {
         SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height);
+    }
+
+    private static class SliceImageResult {
+        public final BufferedImage image;
+        // Offset to add to paintImage(x and y)
+        public final int offX, offY;
+        // Offset to *subtract* from paintImage width and height
+        public final int deltaClipWidth, deltaClipHeight;
+
+        private SliceImageResult(BufferedImage image, int offX, int offY, int deltaClipWidth, int deltaClipHeight) {
+            this.image = image;
+            this.offX = offX;
+            this.offY = offY;
+            this.deltaClipWidth = deltaClipWidth;
+            this.deltaClipHeight = deltaClipHeight;
+        }
+
+        public boolean isZoomOut() {
+            return offX != 0 && deltaClipWidth != 0 || offY != 0 && deltaClipHeight != 0;
+        }
     }
 
     private static class ImageCtx {
