@@ -41,6 +41,7 @@ public class AsyncImageViewer extends JPanel {
         this.settingCompensateAspectRatio = settingCompensateAspectRatio;
         this.curViewPort = viewPort;
 
+        // Zoom on click
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
@@ -50,7 +51,33 @@ public class AsyncImageViewer extends JPanel {
                     }
                 }
             }
-
+        });
+        // Mouse wheel zooming
+        //noinspection Convert2Lambda
+        addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
+                if ((mouseWheelEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0) {
+                    double wheel = mouseWheelEvent.getPreciseWheelRotation();
+                    double zoomScale = 1 + Math.abs(wheel) * S_MOUSEWHEEL_ZOOM_SPEED;
+                    zoomInOnPoint(mouseWheelEvent, zoomScale, wheel >= 0);
+                } else if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.CTRL_DOWN_MASK) {
+                    double wheel = mouseWheelEvent.getPreciseWheelRotation();
+                    setViewPort(wheel > 0
+                            ? curViewPort.zoomOut(1.0 + wheel * S_MOUSEWHEEL_ZOOM_SPEED)
+                            : curViewPort.zoomIn(1.0 + -wheel * S_MOUSEWHEEL_ZOOM_SPEED));
+                } else {
+                    // Up-Down or Left-Right
+                    if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
+                        setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
+                    } else {
+                        setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
+                    }
+                }
+            }
+        });
+        // Selection listener
+        MouseAdapter selectionListener = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 if ((mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
@@ -81,8 +108,7 @@ public class AsyncImageViewer extends JPanel {
                     cancelSelectionAction.setEnabled(false);
                 }
             }
-        });
-        addMouseMotionListener(new MouseMotionAdapter() {
+
             @Override
             public void mouseDragged(MouseEvent mouseEvent) {
                 if (havePressedSelection) {
@@ -102,30 +128,9 @@ public class AsyncImageViewer extends JPanel {
                     repaint();
                 }
             }
-        });
-        //noinspection Convert2Lambda
-        addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
-                if ((mouseWheelEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0) {
-                    double wheel = mouseWheelEvent.getPreciseWheelRotation();
-                    double zoomScale = 1 + Math.abs(wheel) * S_MOUSEWHEEL_ZOOM_SPEED;
-                    zoomInOnPoint(mouseWheelEvent, zoomScale, wheel >= 0);
-                } else if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.CTRL_DOWN_MASK) {
-                    double wheel = mouseWheelEvent.getPreciseWheelRotation();
-                    setViewPort(wheel > 0
-                            ? curViewPort.zoomOut(1.0 + wheel * S_MOUSEWHEEL_ZOOM_SPEED)
-                            : curViewPort.zoomIn(1.0 + -wheel * S_MOUSEWHEEL_ZOOM_SPEED));
-                } else {
-                    // Up-Down or Left-Right
-                    if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
-                        setViewPort(curViewPort.shift(mouseWheelEvent.getPreciseWheelRotation() * 0.1, 0.0));
-                    } else {
-                        setViewPort(curViewPort.shift(0.0, mouseWheelEvent.getPreciseWheelRotation() * 0.1));
-                    }
-                }
-            }
-        });
+        };
+        addMouseListener(selectionListener);
+        addMouseMotionListener(selectionListener);
 
         addComponentListener(new ComponentAdapter() {
             @Override
