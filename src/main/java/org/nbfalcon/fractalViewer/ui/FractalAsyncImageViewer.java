@@ -15,6 +15,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.function.Function;
 
 public class FractalAsyncImageViewer extends AsyncImageViewer {
@@ -72,6 +74,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
                 lastMouseY = (float) e.getY() / getHeight();
             }
         });
+        addPropertyChangeListener("viewPort", evt -> updateAtCursorForMousePosition());
     }
 
     private static String formatComplex(Complex c) {

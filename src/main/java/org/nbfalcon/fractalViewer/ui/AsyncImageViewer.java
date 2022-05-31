@@ -248,10 +248,12 @@ public class AsyncImageViewer extends JPanel {
     }
 
     public void setViewPort(ViewPort myViewPort) {
+        ViewPort old = curViewPort;
         this.curViewPort = myViewPort;
         redrawAsync();
         // Redraw now, since we can at least scale the image incrementally while waiting for the full render
         repaint();
+        firePropertyChange("viewPort", old, myViewPort);
     }
 
     private double getX(MouseEvent mouseEvent) {
