@@ -15,7 +15,11 @@ import java.util.function.Consumer;
 public class AsyncImageViewer extends JPanel {
     public static final double S_ZOOM_SCALE = 2;
     public static final double S_MOUSEWHEEL_ZOOM_SPEED = 0.5;
+    public static final double S_MOUSEWHEEL_ZOOM_PAN_COEFF = 0.5;
     public static final double S_MOUSEWHEEL_PAN_SPEED = 0.1;
+    public static final double S_ZOOM_SPEED_LIVE = 1.05;
+    public static final int S_ZOOM_LIVE_DELAY_MS = 100;
+    public static final double S_ZOOM_LIVE_PAN_COEFF = 0.1;
 
     /**
      * The default viewport used by new image viewers.
@@ -48,7 +52,7 @@ public class AsyncImageViewer extends JPanel {
             public void mouseClicked(MouseEvent mouseEvent) {
                 if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == 0) {
                     if (mouseEvent.getButton() == MouseEvent.BUTTON1 || mouseEvent.getButton() == MouseEvent.BUTTON3) {
-                        zoomInOnPoint(mouseEvent, S_ZOOM_SCALE, mouseEvent.getButton() == MouseEvent.BUTTON3);
+                        zoomInOnPoint(mouseEvent, S_ZOOM_SCALE, mouseEvent.getButton() == MouseEvent.BUTTON3,  1.0);
                     }
                 }
             }
@@ -61,7 +65,7 @@ public class AsyncImageViewer extends JPanel {
                 if ((mouseWheelEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0) {
                     double wheel = mouseWheelEvent.getPreciseWheelRotation();
                     double zoomScale = 1 + Math.abs(wheel) * S_MOUSEWHEEL_ZOOM_SPEED;
-                    zoomInOnPoint(mouseWheelEvent, zoomScale, wheel >= 0);
+                    zoomInOnPoint(mouseWheelEvent, zoomScale, wheel >= 0, S_MOUSEWHEEL_ZOOM_PAN_COEFF);
                 } else if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.CTRL_DOWN_MASK) {
                     double wheel = mouseWheelEvent.getPreciseWheelRotation();
                     setViewPort(wheel > 0
@@ -77,6 +81,45 @@ public class AsyncImageViewer extends JPanel {
                 }
             }
         });
+        // Live zooming
+        MouseAdapter liveZoomListener = new MouseAdapter() {
+            private MouseEvent lastMouse;
+
+            private final Timer pressedTimer = new Timer(S_ZOOM_LIVE_DELAY_MS, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    zoomInOnPoint(lastMouse,
+                            S_ZOOM_SPEED_LIVE, lastMouse.getButton() == MouseEvent.BUTTON3,
+                            S_ZOOM_LIVE_PAN_COEFF);
+                }
+            });
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0) {
+                    lastMouse = e;
+                    pressedTimer.start();
+                }
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                lastMouse = e;
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseDragged(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                pressedTimer.stop();
+            }
+        };
+        addMouseListener(liveZoomListener);
+        addMouseMotionListener(liveZoomListener);
+
         // Selection listener
         MouseAdapter selectionListener = new MouseAdapter() {
             @Override
@@ -230,10 +273,13 @@ public class AsyncImageViewer extends JPanel {
     }
 
     /**
+     * @param panSpeedCoeff How aggressively to recenter (1 = recenter on point, 0 = just zoom in/out)
      * @param mouseEvent only used for positioning
      */
-    private void zoomInOnPoint(MouseEvent mouseEvent, double scale, boolean zoomOut) {
-        ViewPort centered = curViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
+    private void zoomInOnPoint(MouseEvent mouseEvent, double scale, boolean zoomOut, double panSpeedCoeff) {
+        ViewPort centered = curViewPort.shift(
+                (getX(mouseEvent) - 0.5) * panSpeedCoeff,
+                (getY(mouseEvent) - 0.5) * panSpeedCoeff);
         ViewPort scaled = zoomOut ? centered.zoomOut(scale) : centered.zoomIn(scale);
         setViewPort(scaled);
     }
