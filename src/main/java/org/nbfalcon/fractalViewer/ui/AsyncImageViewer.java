@@ -13,6 +13,9 @@ import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 public class AsyncImageViewer extends JPanel {
+    public static final double S_ZOOM_SCALE = 2;
+    public static final double S_MOUSEWHEEL_ZOOM_SPEED = 0.5;
+
     /**
      * The default viewport used by new image viewers.
      */
@@ -43,12 +46,7 @@ public class AsyncImageViewer extends JPanel {
             public void mouseClicked(MouseEvent mouseEvent) {
                 if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == 0) {
                     if (mouseEvent.getButton() == MouseEvent.BUTTON1 || mouseEvent.getButton() == MouseEvent.BUTTON3) {
-                        ViewPort shifted = curViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
-
-                        double ZOOM_SCALE = 2;
-                        ViewPort scaled = mouseEvent.getButton() == MouseEvent.BUTTON1 ? shifted.zoomIn(ZOOM_SCALE) : shifted.zoomOut(ZOOM_SCALE);
-
-                        setViewPort(scaled);
+                        zoomInOnPoint(mouseEvent, S_ZOOM_SCALE, mouseEvent.getButton() == MouseEvent.BUTTON3);
                     }
                 }
             }
@@ -109,11 +107,15 @@ public class AsyncImageViewer extends JPanel {
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
-                if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.CTRL_DOWN_MASK) {
+                if ((mouseWheelEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0) {
+                    double wheel = mouseWheelEvent.getPreciseWheelRotation();
+                    double zoomScale = 1 + Math.abs(wheel) * S_MOUSEWHEEL_ZOOM_SPEED;
+                    zoomInOnPoint(mouseWheelEvent, zoomScale, wheel >= 0);
+                } else if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.CTRL_DOWN_MASK) {
                     double wheel = mouseWheelEvent.getPreciseWheelRotation();
                     setViewPort(wheel > 0
-                            ? curViewPort.zoomOut(1.0 + wheel * 0.5)
-                            : curViewPort.zoomIn(1.0 + -wheel * 0.5));
+                            ? curViewPort.zoomOut(1.0 + wheel * S_MOUSEWHEEL_ZOOM_SPEED)
+                            : curViewPort.zoomIn(1.0 + -wheel * S_MOUSEWHEEL_ZOOM_SPEED));
                 } else {
                     // Up-Down or Left-Right
                     if ((mouseWheelEvent.getModifiersEx() & MouseEventX.CS_MASK) == MouseEvent.SHIFT_DOWN_MASK) {
@@ -219,6 +221,15 @@ public class AsyncImageViewer extends JPanel {
                 // Negative if we had to clip on rhs
                 Math.max(0, rawWidth - maxWidth),
                 Math.max(0, rawHeight - maxHeight));
+    }
+
+    /**
+     * @param mouseEvent only used for positioning
+     */
+    private void zoomInOnPoint(MouseEvent mouseEvent, double scale, boolean zoomOut) {
+        ViewPort centered = curViewPort.shift(getX(mouseEvent) - 0.5, getY(mouseEvent) - 0.5);
+        ViewPort scaled = zoomOut ? centered.zoomOut(scale) : centered.zoomIn(scale);
+        setViewPort(scaled);
     }
 
     public void injectRenderer(AsyncImageRenderer renderer) {
