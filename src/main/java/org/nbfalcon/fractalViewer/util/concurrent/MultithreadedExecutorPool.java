@@ -23,13 +23,18 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
     @Override
     public SimplePromise<Void> submit(Task task) {
         final int totalThreads = nThreads;
-        AtomicInteger countDown = new AtomicInteger(totalThreads);
 
-        SubmitHandleImpl handle = new SubmitHandleImpl();
+        final SubmitHandleImpl handle = new SubmitHandleImpl();
+        final AtomicInteger countDown = new AtomicInteger(totalThreads);
+        final Object taskRWFence = new Object();
 
         handle.cancelAll = IntStream.range(0, totalThreads).boxed().map(threadI -> myExecutorService.submit(() -> {
             if (!handle.isCancelled()) {
                 task.execute(threadI, totalThreads);
+                // Ensure task.execute()'s changes are flushed to memory before completing the handle;
+                // read and write barrier
+                //noinspection EmptySynchronizedStatement
+                synchronized (taskRWFence) {}
                 if (countDown.decrementAndGet() == 0) {
                     handle.complete(null);
                 }
