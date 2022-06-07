@@ -1,7 +1,7 @@
 package org.nbfalcon.fractalViewer.fractals.impl;
 
 import org.nbfalcon.fractalViewer.fractals.FractalBase;
-import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
+import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.ui.SettingsUI;
 import org.nbfalcon.fractalViewer.util.Complex;
 import org.nbfalcon.fractalViewer.util.ViewPort;
@@ -51,7 +51,7 @@ public class JuliaFractal extends FractalBase {
     }
 
     @Override
-    public FractalRenderer copy() {
+    public JuliaFractal copy() {
         JuliaFractal copyOfMe = copySuper(new JuliaFractal());
         copyOfMe.x = this.x;
         copyOfMe.y = this.y;

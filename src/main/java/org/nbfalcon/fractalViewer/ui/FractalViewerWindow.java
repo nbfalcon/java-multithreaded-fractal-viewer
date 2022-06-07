@@ -2,7 +2,7 @@ package org.nbfalcon.fractalViewer.ui;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
+import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.palette.Palette;
 import org.nbfalcon.fractalViewer.palette.PaletteUtil;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
@@ -36,9 +36,9 @@ public class FractalViewerWindow extends JFrame {
      * <p>
      * The currently selected fractal is in {@link #myViewer}.{@link AsyncImageViewer#getRenderer()}.
      */
-    private final List<FractalRenderer> myAvailableFractals;
+    private final List<Fractal> myAvailableFractals;
 
-    private FractalViewerWindow(List<FractalRenderer> availableFractals, int initialFractal,
+    private FractalViewerWindow(List<Fractal> availableFractals, int initialFractal,
                                 @NotNull Palette initialPalette,
                                 @NotNull FractalViewerApplicationContext application,
                                 @Nullable FractalViewerWindow parent) {
@@ -71,7 +71,7 @@ public class FractalViewerWindow extends JFrame {
         pack();
     }
 
-    public FractalViewerWindow(List<FractalRenderer> availableFractals, int initialFractal,
+    public FractalViewerWindow(List<Fractal> availableFractals, int initialFractal,
                                @NotNull Palette initialPalette,
                                @NotNull FractalViewerApplicationContext application) {
         this(availableFractals, initialFractal, initialPalette, application, null);
@@ -79,7 +79,7 @@ public class FractalViewerWindow extends JFrame {
 
     private FractalViewerWindow copyWin() {
         FractalViewerWindow window = new FractalViewerWindow(
-                myAvailableFractals.stream().map(FractalRenderer::copy).collect(Collectors.toList()),
+                myAvailableFractals.stream().map(Fractal::copy).collect(Collectors.toList()),
                 getSelectedFractalIndex(), myViewer.getPalette(),
                 application, this);
 
@@ -131,7 +131,7 @@ public class FractalViewerWindow extends JFrame {
                     final String finalFormat = format;
 
                     final Palette paletteForExport = saveImageChooser.getPalette();
-                    final FractalRenderer renderer = myViewer.getFractal();
+                    final Fractal renderer = myViewer.getFractal();
                     final int width = saveImageChooser.exportSettingsAccessory.getWidth();
                     final int height = saveImageChooser.exportSettingsAccessory.getHeight();
                     final int nIter = renderer.getMaxIter();
@@ -181,7 +181,7 @@ public class FractalViewerWindow extends JFrame {
 
         // Fractals
         ButtonGroup fractalSelectionGroup = new ButtonGroup();
-        for (FractalRenderer fractal : myAvailableFractals) {
+        for (Fractal fractal : myAvailableFractals) {
             JRadioButtonMenuItem menuItem = createFractalMenuItem(fractal, fractalSelectionGroup);
             fractalMenu.add(menuItem);
             if (fractal == myViewer.getFractal()) {
@@ -294,7 +294,7 @@ public class FractalViewerWindow extends JFrame {
         return paletteMenu;
     }
 
-    private JRadioButtonMenuItem createFractalMenuItem(FractalRenderer fractal, ButtonGroup buttonGroup) {
+    private JRadioButtonMenuItem createFractalMenuItem(Fractal fractal, ButtonGroup buttonGroup) {
         JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(new AbstractAction(fractal.getName()) {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

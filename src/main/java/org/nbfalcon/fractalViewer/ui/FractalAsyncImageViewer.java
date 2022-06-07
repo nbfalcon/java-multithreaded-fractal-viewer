@@ -1,7 +1,7 @@
 package org.nbfalcon.fractalViewer.ui;
 
 import org.jetbrains.annotations.NotNull;
-import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
+import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.palette.Palette;
 import org.nbfalcon.fractalViewer.ui.components.CursorInfoLabel;
 import org.nbfalcon.fractalViewer.util.ArrayUtil;
@@ -23,13 +23,13 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
     private final CursorInfoLabel atCursor;
     private final JPanel bottomInfoPanel;
     private volatile FractalResult last = null;
-    private @NotNull FractalRenderer selectedFractal;
+    private @NotNull Fractal selectedFractal;
     private volatile @NotNull Palette selectedPalette;
     private boolean settingDeriveMaxIter = false;
 
     private float lastMouseX = -1.0f, lastMouseY = -1.0f;
 
-    public FractalAsyncImageViewer(FractalViewerApplicationContext application, @NotNull FractalRenderer initialFractal, @NotNull Palette initialPalette) {
+    public FractalAsyncImageViewer(FractalViewerApplicationContext application, @NotNull Fractal initialFractal, @NotNull Palette initialPalette) {
         super();
 
         this.application = application;
@@ -40,7 +40,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         super.injectRenderer(new AsyncImageRenderer() {
             @Override
             public SimplePromise<BufferedImage> render(ViewPort viewPort, int width, int height) {
-                final FractalRenderer fractal = getFractal();
+                final Fractal fractal = getFractal();
                 final int maxIter = fractal.getMaxIter();
 
                 SimplePromise<int[]> fractalResult = fractal.renderIterations(
@@ -158,11 +158,11 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         }
     }
 
-    public FractalRenderer getFractal() {
+    public Fractal getFractal() {
         return selectedFractal;
     }
 
-    public void setFractal(FractalRenderer selectedFractal) {
+    public void setFractal(Fractal selectedFractal) {
         this.selectedFractal = selectedFractal;
         redrawAsync();
     }

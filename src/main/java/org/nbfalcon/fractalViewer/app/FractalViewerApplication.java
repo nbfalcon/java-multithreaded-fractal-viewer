@@ -1,6 +1,6 @@
 package org.nbfalcon.fractalViewer.app;
 
-import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
+import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.fractals.impl.JuliaFractal;
 import org.nbfalcon.fractalViewer.fractals.impl.MandelbrotFractal;
 import org.nbfalcon.fractalViewer.fractals.impl.SierpinskiTriangleFractal;
@@ -48,7 +48,7 @@ public class FractalViewerApplication implements FractalViewerApplicationContext
     }
 
     public void createInitialWindow() {
-        List<FractalRenderer> allFractals = List.of(
+        List<Fractal> allFractals = List.of(
                 new MandelbrotFractal(), new JuliaFractal(),
                 new SierpinskiTriangleFractal());
         FractalViewerWindow window = new FractalViewerWindow(

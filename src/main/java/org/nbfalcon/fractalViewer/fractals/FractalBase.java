@@ -9,7 +9,7 @@ import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class FractalBase implements FractalRenderer {
+public abstract class FractalBase implements Fractal {
     public int maxIter = 255;
 
     protected FractalBase() {
