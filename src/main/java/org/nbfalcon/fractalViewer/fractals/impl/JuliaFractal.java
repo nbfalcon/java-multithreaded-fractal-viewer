@@ -11,13 +11,14 @@ import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import javax.swing.*;
 
 public class JuliaFractal extends FractalBase {
-    private double x = -0.1;
-    private double y = 0.65;
+    // Constants from: https://calcpad.blog/2022/02/23/how-to-plot-the-julia-set/
+    private double x = -0.4;
+    private double y = 0.59;
 
     @Override
     public SimplePromise<int[]> renderIterations(MultithreadedExecutor pool, ViewPort viewPort, int width, int height) {
         Complex juliaPoint = new Complex(x, y);
-        return renderIterations1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(xy, juliaPoint, maxIter, 10.0));
+        return renderIterations1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(juliaPoint, xy, maxIter, 10.0));
     }
 
     @Override
@@ -26,11 +27,12 @@ public class JuliaFractal extends FractalBase {
 
         JPanel settingsPanel = parentUI.getSettingsPanel();
         settingsPanel.add(new JLabel("X:"));
-        JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(x, -1000.0, 1000.0, 0.1));
+        // While abs < 10 -> anything |x| >= 10 will finish immediately, leading to a black image
+        JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(x, -10.0, 10.0, 0.1));
         settingsPanel.add(xSpinner);
 
         settingsPanel.add(new JLabel("Y:"));
-        JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(y, -1000.0, +1000.0, 0.1));
+        JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(y, -10.0, +10.0, 0.1));
         settingsPanel.add(ySpinner);
 
         return new SettingsUI.Derived(parentUI) {

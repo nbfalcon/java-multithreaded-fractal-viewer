@@ -17,7 +17,7 @@ public abstract class FractalBase implements FractalRenderer {
 
     public static int calcIterations(Complex c, Complex z, int maxIter, double max) {
         int i;
-        for (i = 0; i < maxIter && z.abs() < max; i++) {
+        for (i = 0; i < maxIter && z.abs() <= max; i++) {
             z = z.multiply(z).add(c);
         }
         return i;

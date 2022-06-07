@@ -64,6 +64,10 @@ public class Complex {
         return Math.hypot(re, im);
     }
 
+    public double abs2() {
+        return re * re + im * im;
+    }
+
     // return angle/phase/argument, normalized to be between -pi and pi
     public double phase() {
         return Math.atan2(im, re);
