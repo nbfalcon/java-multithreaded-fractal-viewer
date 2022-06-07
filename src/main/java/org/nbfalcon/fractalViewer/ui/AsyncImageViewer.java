@@ -52,7 +52,7 @@ public class AsyncImageViewer extends JPanel {
             public void mouseClicked(MouseEvent mouseEvent) {
                 if ((mouseEvent.getModifiersEx() & MouseEventX.CS_MASK) == 0) {
                     if (mouseEvent.getButton() == MouseEvent.BUTTON1 || mouseEvent.getButton() == MouseEvent.BUTTON3) {
-                        zoomInOnPoint(mouseEvent, S_ZOOM_SCALE, mouseEvent.getButton() == MouseEvent.BUTTON3,  1.0);
+                        zoomInOnPoint(mouseEvent, S_ZOOM_SCALE, mouseEvent.getButton() == MouseEvent.BUTTON3, 1.0);
                     }
                 }
             }
@@ -274,7 +274,7 @@ public class AsyncImageViewer extends JPanel {
 
     /**
      * @param panSpeedCoeff How aggressively to recenter (1 = recenter on point, 0 = just zoom in/out)
-     * @param mouseEvent only used for positioning
+     * @param mouseEvent    only used for positioning
      */
     private void zoomInOnPoint(MouseEvent mouseEvent, double scale, boolean zoomOut, double panSpeedCoeff) {
         ViewPort centered = curViewPort.shift(
@@ -285,9 +285,8 @@ public class AsyncImageViewer extends JPanel {
     }
 
     public void injectRenderer(AsyncImageRenderer renderer) {
-        if (this.renderer == null) {
-            this.renderer = renderer;
-        }
+        assert this.renderer == null;
+        this.renderer = renderer;
     }
 
     public AsyncImageRenderer getRenderer() {
