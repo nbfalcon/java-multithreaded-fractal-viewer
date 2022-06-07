@@ -1,5 +1,7 @@
-package org.nbfalcon.fractalViewer.fractals;
+package org.nbfalcon.fractalViewer.fractals.impl;
 
+import org.nbfalcon.fractalViewer.fractals.FractalBase;
+import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
 import org.nbfalcon.fractalViewer.ui.SettingsUI;
 import org.nbfalcon.fractalViewer.util.Complex;
 import org.nbfalcon.fractalViewer.util.ViewPort;

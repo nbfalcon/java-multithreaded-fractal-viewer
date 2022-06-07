@@ -4,7 +4,6 @@ import org.nbfalcon.fractalViewer.app.FractalViewerApplication;
 
 import javax.swing.*;
 
-// FIXME: more fractals: fractal selection
 // FIXME: settings: how many threads?
 public class Main {
     public static void main(String[] args) throws InterruptedException {

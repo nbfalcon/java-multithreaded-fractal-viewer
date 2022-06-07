@@ -1,8 +1,9 @@
 package org.nbfalcon.fractalViewer.app;
 
 import org.nbfalcon.fractalViewer.fractals.FractalRenderer;
-import org.nbfalcon.fractalViewer.fractals.JuliaFractal;
-import org.nbfalcon.fractalViewer.fractals.MandelbrotFractal;
+import org.nbfalcon.fractalViewer.fractals.impl.JuliaFractal;
+import org.nbfalcon.fractalViewer.fractals.impl.MandelbrotFractal;
+import org.nbfalcon.fractalViewer.fractals.impl.SierpinskiTriangleFractal;
 import org.nbfalcon.fractalViewer.palette.palettes.MatplotlibPalettes;
 import org.nbfalcon.fractalViewer.ui.FractalViewerApplicationContext;
 import org.nbfalcon.fractalViewer.ui.FractalViewerWindow;
@@ -47,7 +48,9 @@ public class FractalViewerApplication implements FractalViewerApplicationContext
     }
 
     public void createInitialWindow() {
-        List<FractalRenderer> allFractals = List.of(new MandelbrotFractal(), new JuliaFractal());
+        List<FractalRenderer> allFractals = List.of(
+                new MandelbrotFractal(), new JuliaFractal(),
+                new SierpinskiTriangleFractal());
         FractalViewerWindow window = new FractalViewerWindow(
                 allFractals, 0, MatplotlibPalettes.COOLWARM, this);
         registerWindow(window, true);
