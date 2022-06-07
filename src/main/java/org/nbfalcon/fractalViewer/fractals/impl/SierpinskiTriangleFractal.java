@@ -57,4 +57,9 @@ public class SierpinskiTriangleFractal extends FractalBase {
     public String getName() {
         return "Sierpinski Triangle";
     }
+
+    @Override
+    public ViewPort getPreferredViewport() {
+        return new ViewPort(0, 1.0, 1.0, 0);
+    }
 }

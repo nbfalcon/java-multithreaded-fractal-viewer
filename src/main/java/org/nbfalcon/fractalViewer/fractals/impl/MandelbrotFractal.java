@@ -1,7 +1,6 @@
 package org.nbfalcon.fractalViewer.fractals.impl;
 
 import org.nbfalcon.fractalViewer.fractals.FractalBase;
-import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.util.Complex;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.MultithreadedExecutor;
@@ -21,5 +20,10 @@ public class MandelbrotFractal extends FractalBase {
     @Override
     public String getName() {
         return "Mandelbrot";
+    }
+
+    @Override
+    public ViewPort getPreferredViewport() {
+        return new ViewPort(-2.0, 1.12, 0.47, -1.12);
     }
 }

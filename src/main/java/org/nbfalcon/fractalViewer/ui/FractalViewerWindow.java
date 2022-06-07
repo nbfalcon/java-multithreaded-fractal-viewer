@@ -214,7 +214,7 @@ public class FractalViewerWindow extends JFrame {
         JMenuItem resetPerspective = new JMenuItem(new AbstractAction("Reset Perspective") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                myViewer.setViewPort(AsyncImageViewer.getDefaultViewport());
+                myViewer.setViewPort(myViewer.getFractal().getPreferredViewport());
             }
         });
         view.add(resetPerspective);

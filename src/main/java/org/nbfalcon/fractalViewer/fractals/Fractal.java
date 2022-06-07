@@ -15,4 +15,6 @@ public interface Fractal {
     String getName();
 
     int getMaxIter();
+
+    ViewPort getPreferredViewport();
 }

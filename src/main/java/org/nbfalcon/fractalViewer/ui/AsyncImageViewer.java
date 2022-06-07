@@ -339,10 +339,11 @@ public class AsyncImageViewer extends JPanel {
         super.paintComponent(g);
 
         if (bestImage != null) {
-            if (bestImage.viewPort.equals(curViewPort)) {
+            ViewPort viewPort = getCompensatedViewport();
+            if (bestImage.viewPort.equals(viewPort)) {
                 g.drawImage(bestImage.image, 0, 0, getWidth(), getHeight(), null);
             } else {
-                ViewPort imViewPortR = curViewPort.relativeTo(bestImage.viewPort);
+                ViewPort imViewPortR = viewPort.relativeTo(bestImage.viewPort);
                 SliceImageResult slice = sliceImage(bestImage.image, imViewPortR);
                 if (slice != null && !slice.isZoomOut()) {
                     g.drawImage(
@@ -382,14 +383,7 @@ public class AsyncImageViewer extends JPanel {
         if (getWidth() <= 0 || getHeight() <= 0 || !isShowing()) return;
 
         // 2. ViewPort with correct aspect ratio
-        ViewPort viewPort;
-        if (!settingCompensateAspectRatio || getHeight() == getWidth()) {
-            viewPort = curViewPort.copy();
-        } else if (getHeight() > getWidth()) {
-            viewPort = curViewPort.stretchY((double) getHeight() / getWidth());
-        } else /* if getWidth() > getHeight() */ {
-            viewPort = curViewPort.stretchX((double) getWidth() / getHeight());
-        }
+        ViewPort viewPort = getCompensatedViewport();
 
         lastUpdateHeight = getHeight();
         lastUpdateWidth = getWidth();
@@ -401,6 +395,18 @@ public class AsyncImageViewer extends JPanel {
             bestImage = new ImageCtx(viewPort, image);
             repaint();
         }));
+    }
+
+    private ViewPort getCompensatedViewport() {
+        ViewPort viewPort;
+        if (!settingCompensateAspectRatio || getHeight() == getWidth() /* we don't want floating-point loss */) {
+            viewPort = curViewPort.copy();
+        } else if (getHeight() > getWidth()) {
+            viewPort = curViewPort.stretchY((double) getHeight() / getWidth());
+        } else /* if getWidth() > getHeight() */ {
+            viewPort = curViewPort.stretchX((double) getWidth() / getHeight());
+        }
+        return viewPort;
     }
 
     public void copySettingsFrom(AsyncImageViewer source) {

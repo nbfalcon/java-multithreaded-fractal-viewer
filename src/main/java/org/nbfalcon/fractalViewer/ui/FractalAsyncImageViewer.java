@@ -36,6 +36,8 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         this.selectedFractal = initialFractal;
         this.selectedPalette = initialPalette;
 
+        super.setViewPort(initialFractal.getPreferredViewport());
+
         //noinspection Convert2Lambda
         super.injectRenderer(new AsyncImageRenderer() {
             @Override

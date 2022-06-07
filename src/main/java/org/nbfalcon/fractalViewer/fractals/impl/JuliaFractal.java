@@ -1,7 +1,6 @@
 package org.nbfalcon.fractalViewer.fractals.impl;
 
 import org.nbfalcon.fractalViewer.fractals.FractalBase;
-import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.ui.SettingsUI;
 import org.nbfalcon.fractalViewer.util.Complex;
 import org.nbfalcon.fractalViewer.util.ViewPort;
@@ -48,6 +47,11 @@ public class JuliaFractal extends FractalBase {
     @Override
     public String getName() {
         return "Julia";
+    }
+
+    @Override
+    public ViewPort getPreferredViewport() {
+        return new ViewPort(-1.385, 1.0, 1.385, -1.0);
     }
 
     @Override
