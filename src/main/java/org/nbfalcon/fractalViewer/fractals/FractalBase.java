@@ -62,6 +62,11 @@ public abstract class FractalBase implements FractalRenderer {
         }).map(ignored -> result);
     }
 
+    protected <T extends FractalBase> T copySuper(T derivedInstance) {
+        derivedInstance.maxIter = this.maxIter;
+        return derivedInstance;
+    }
+
     @Override
     public int getMaxIter() {
         return maxIter;

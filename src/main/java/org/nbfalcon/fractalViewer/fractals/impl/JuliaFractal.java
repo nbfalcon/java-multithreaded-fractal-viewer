@@ -52,10 +52,9 @@ public class JuliaFractal extends FractalBase {
 
     @Override
     public FractalRenderer copy() {
-        JuliaFractal copyOfMe = new JuliaFractal();
+        JuliaFractal copyOfMe = copySuper(new JuliaFractal());
         copyOfMe.x = this.x;
         copyOfMe.y = this.y;
-        copyOfMe.maxIter = this.maxIter;
         return copyOfMe;
     }
 }

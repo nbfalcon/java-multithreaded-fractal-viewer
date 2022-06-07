@@ -50,9 +50,7 @@ public class SierpinskiTriangleFractal extends FractalBase {
 
     @Override
     public SierpinskiTriangleFractal copy() {
-        SierpinskiTriangleFractal copyOfMe = new SierpinskiTriangleFractal();
-        copyOfMe.maxIter = this.maxIter;
-        return copyOfMe;
+        return copySuper(new SierpinskiTriangleFractal());
     }
 
     @Override

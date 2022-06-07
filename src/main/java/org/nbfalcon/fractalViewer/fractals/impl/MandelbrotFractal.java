@@ -15,9 +15,7 @@ public class MandelbrotFractal extends FractalBase {
 
     @Override
     public FractalRenderer copy() {
-        MandelbrotFractal copyOfMe = new MandelbrotFractal();
-        copyOfMe.maxIter = this.maxIter;
-        return copyOfMe;
+        return copySuper(new MandelbrotFractal());
     }
 
     @Override
