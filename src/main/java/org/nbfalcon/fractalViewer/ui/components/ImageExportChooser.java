@@ -13,7 +13,9 @@ public class ImageExportChooser extends ImageIOFileChooser {
     private static final String LAST_BROWSED_DIR_PREF = "org.nbfalcon.fractalViewer/ui.components.ImageExportChooser.LAST_BROWSED_DIR";
     public final FileChooserAccessory exportSettingsAccessory;
     private final JComboBox<Palette> exportPalette;
+
     private int exportCounter = 1;
+    private boolean suggestNewFileNameOnNextDialog = true;
 
     public ImageExportChooser() {
         setDialogTitle("Save Fractal as Image...");
@@ -27,9 +29,6 @@ public class ImageExportChooser extends ImageIOFileChooser {
         if (rememberDir != null) {
             setCurrentDirectory(new File(rememberDir));
         }
-
-        suggestFileName();
-        exportCounter++;
     }
 
     @Override
@@ -59,10 +58,14 @@ public class ImageExportChooser extends ImageIOFileChooser {
 
     @Override
     public int showSaveDialog(Component parent) throws HeadlessException {
-        int result = super.showSaveDialog(parent);
-        if (result == APPROVE_OPTION) {
+        if (suggestNewFileNameOnNextDialog) {
             suggestFileName();
             exportCounter++;
+            suggestNewFileNameOnNextDialog = false;
+        }
+        int result = super.showSaveDialog(parent);
+        if (result == APPROVE_OPTION) {
+            suggestNewFileNameOnNextDialog = true;
         }
         return result;
     }
