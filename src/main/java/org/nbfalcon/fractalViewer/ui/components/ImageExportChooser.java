@@ -11,7 +11,7 @@ import java.util.prefs.Preferences;
 
 public class ImageExportChooser extends ImageIOFileChooser {
     private static final String LAST_BROWSED_DIR_PREF = "org.nbfalcon.fractalViewer/ui.components.ImageExportChooser.LAST_BROWSED_DIR";
-    public final FileChooserAccessory exportSettingsAccessory;
+    private final FileChooserAccessory exportSettingsAccessory;
     private final JComboBox<Palette> exportPalette;
 
     private int exportCounter = 1;
@@ -75,8 +75,7 @@ public class ImageExportChooser extends ImageIOFileChooser {
     }
 
     private String getFileNameForExport(int exportCounter) {
-        return String.format("%d_%dx%d_Mandelbrot",
-                exportCounter, exportSettingsAccessory.getWidth(), exportSettingsAccessory.getHeight());
+        return String.format("%d_%dx%d_Mandelbrot", exportCounter, getExportWidth(), getExportHeight());
     }
 
     private void suggestFileName() {
@@ -98,12 +97,13 @@ public class ImageExportChooser extends ImageIOFileChooser {
         exportPalette.setSelectedItem(palette);
     }
 
-    public class FileChooserAccessory extends JPanel {
-        private final JSpinner widthInput = new JSpinner();
-        private final JSpinner heightInput = new JSpinner();
-        private final JCheckBox closeAfterSaving;
-        int width;
-        int height;
+    private class FileChooserAccessory extends JPanel {
+        public final JSpinner widthInput = new JSpinner();
+        public final JSpinner heightInput = new JSpinner();
+        public final JCheckBox closeAfterSaving;
+        public final JCheckBox compensateAspectRatio;
+        public int width;
+        public int height;
 
         public FileChooserAccessory() {
             // Apparently, PNG size is 4bytes -> theoretically max value
@@ -152,12 +152,18 @@ public class ImageExportChooser extends ImageIOFileChooser {
             c.gridx = 1;
             add(exportPalette, c);
 
-            closeAfterSaving = new JCheckBox("Close after saving");
+            compensateAspectRatio = new JCheckBox("Compensate Aspect Ratio");
+            compensateAspectRatio.setToolTipText("Same as the Option in View");
+            c.gridy = 4;
+            c.gridx = 0;
+            add(compensateAspectRatio, c);
+
+            closeAfterSaving = new JCheckBox("Close After Saving");
             closeAfterSaving.setToolTipText("Close this fractal viewer window after clicking 'Save'");
-            c.insets = insetsDef;
+            c.gridy = 5;
             c.gridx = 0;
             c.gridwidth = 2;
-            c.gridy = 4;
+            c.insets = insetsDef;
             add(closeAfterSaving, c);
         }
 
@@ -175,17 +181,21 @@ public class ImageExportChooser extends ImageIOFileChooser {
                 }
             }
         }
+    }
 
-        public int getWidth() {
-            return width;
-        }
+    public int getExportWidth() {
+        return exportSettingsAccessory.width;
+    }
 
-        public int getHeight() {
-            return height;
-        }
+    public int getExportHeight() {
+        return exportSettingsAccessory.height;
+    }
 
-        public boolean closeAfterSaving() {
-            return closeAfterSaving.isSelected();
-        }
+    public boolean getCloseAfterSaving() {
+        return exportSettingsAccessory.closeAfterSaving.isSelected();
+    }
+
+    public boolean getCompensateAspectRatio() {
+        return exportSettingsAccessory.compensateAspectRatio.isSelected();
     }
 }

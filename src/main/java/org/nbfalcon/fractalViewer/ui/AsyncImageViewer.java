@@ -26,7 +26,10 @@ public class AsyncImageViewer extends JPanel {
      * The default viewport used by new image viewers.
      */
     private static final ViewPort DEFAULT_VIEWPORT = new ViewPort(-2.0, 2.0, 2.0, -2.0);
-
+    /**
+     * May be used to add additional in-progress stuff, like image export renderings.
+     */
+    public final LoadingCursor renderInProgress;
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
     private final AbstractAction cancelSelectionAction;
     private final LatestPromise<BufferedImage> cancelRedraw = new LatestPromise<>();
@@ -39,11 +42,6 @@ public class AsyncImageViewer extends JPanel {
     private ViewPort curViewPort;
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
-
-    /**
-     * May be used to add additional in-progress stuff, like image export renderings.
-     */
-    public final LoadingCursor renderInProgress;
 
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
         super();
@@ -410,15 +408,8 @@ public class AsyncImageViewer extends JPanel {
     }
 
     private ViewPort getCompensatedViewport() {
-        ViewPort viewPort;
-        if (!settingCompensateAspectRatio || getHeight() == getWidth() /* we don't want floating-point loss */) {
-            viewPort = curViewPort.copy();
-        } else if (getHeight() > getWidth()) {
-            viewPort = curViewPort.stretchY((double) getHeight() / getWidth());
-        } else /* if getWidth() > getHeight() */ {
-            viewPort = curViewPort.stretchX((double) getWidth() / getHeight());
-        }
-        return viewPort;
+        if (!settingCompensateAspectRatio) return curViewPort.copy();
+        return curViewPort.stretchForAspectRatio(getHeight(), getWidth());
     }
 
     public void copySettingsFrom(AsyncImageViewer source) {

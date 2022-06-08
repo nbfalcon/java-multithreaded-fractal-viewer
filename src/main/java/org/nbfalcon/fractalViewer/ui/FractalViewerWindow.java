@@ -140,12 +140,16 @@ public class FractalViewerWindow extends JFrame {
 
                     final Palette paletteForExport = saveImageChooser.getPalette();
                     final Fractal renderer = myViewer.getFractal();
-                    final int width = saveImageChooser.exportSettingsAccessory.getWidth();
-                    final int height = saveImageChooser.exportSettingsAccessory.getHeight();
+                    final int width = saveImageChooser.getExportWidth();
+                    final int height = saveImageChooser.getExportHeight();
                     final int nIter = renderer.getMaxIter();
 
+                    ViewPort viewPort = myViewer.getViewPort();
+                    if (saveImageChooser.getCompensateAspectRatio()) {
+                        viewPort = viewPort.stretchForAspectRatio(width, height);
+                    }
                     SimplePromise<BufferedImage> finalResult =
-                            renderer.renderIterations(application.getExportPool(), myViewer.getViewPort(), width, height)
+                            renderer.renderIterations(application.getExportPool(), viewPort, width, height)
                                     .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
                     SimplePromise<Void> finalWritePromise = finalResult.map((image) -> {
                         try {
@@ -158,7 +162,7 @@ public class FractalViewerWindow extends JFrame {
                     });
                     exportRenderLoadingCursor.pushPromise(finalWritePromise);
 
-                    if (saveImageChooser.exportSettingsAccessory.closeAfterSaving()) {
+                    if (saveImageChooser.getCloseAfterSaving()) {
                         SwingUtilitiesX.closeWindow(FractalViewerWindow.this);
                     }
                 }

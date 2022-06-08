@@ -14,6 +14,16 @@ public class ViewPort {
         this.y2 = y2;
     }
 
+    public ViewPort stretchForAspectRatio(int width, int height) {
+        if (height == width /* we don't want floating-point loss */) {
+            return this.copy();
+        } else if (height > width) {
+            return this.stretchY((double) height / width);
+        } else /* if getWidth() > getHeight() */ {
+            return this.stretchX((double) width / height);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
