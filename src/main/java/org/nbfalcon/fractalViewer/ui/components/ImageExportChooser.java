@@ -2,11 +2,13 @@ package org.nbfalcon.fractalViewer.ui.components;
 
 import org.nbfalcon.fractalViewer.palette.Palette;
 import org.nbfalcon.fractalViewer.palette.PaletteUtil;
+import org.nbfalcon.fractalViewer.util.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
 public class ImageExportChooser extends ImageIOFileChooser {
@@ -36,9 +38,9 @@ public class ImageExportChooser extends ImageIOFileChooser {
         // https://stackoverflow.com/questions/3651494/jfilechooser-with-confirmation-dialog
         // We don't have to handle the case of this not being a save action though, since this is exclusively an
         // *export* dialog
-        File selected = getSelectedFile();
-        if (selected.exists()) {
-            int ask = JOptionPane.showConfirmDialog(null, "File '" + selected.getName() + "' already exists. Overwrite?", "Confirm Overwrite", JOptionPane.YES_NO_CANCEL_OPTION);
+        File exportTargetFile = getExportOutput().finalExportFileName;
+        if (exportTargetFile.exists()) {
+            int ask = JOptionPane.showConfirmDialog(null, "File '" + exportTargetFile.getName() + "' already exists. Overwrite?", "Confirm Overwrite", JOptionPane.YES_NO_CANCEL_OPTION);
             if (ask == JOptionPane.CANCEL_OPTION) {
                 super.cancelSelection();
                 return;
@@ -95,6 +97,44 @@ public class ImageExportChooser extends ImageIOFileChooser {
 
     public void setPalette(Palette palette) {
         exportPalette.setSelectedItem(palette);
+    }
+
+    public int getExportWidth() {
+        return exportSettingsAccessory.width;
+    }
+
+    public int getExportHeight() {
+        return exportSettingsAccessory.height;
+    }
+
+    public boolean getCloseAfterSaving() {
+        return exportSettingsAccessory.closeAfterSaving.isSelected();
+    }
+
+    public boolean getCompensateAspectRatio() {
+        return exportSettingsAccessory.compensateAspectRatio.isSelected();
+    }
+
+    public ImageExportTarget getExportOutput() {
+        String format = getImageIOFormat();
+        File saveTo = Objects.requireNonNull(getSelectedFileWithExtension());
+
+        if (format == null) {
+            format = "png";
+            saveTo = FileUtils.addExtension(saveTo, "png");
+        }
+
+        return new ImageExportTarget(saveTo, format);
+    }
+
+    public static class ImageExportTarget {
+        public final File finalExportFileName;
+        public final String format;
+
+        public ImageExportTarget(File finalExportFileName, String format) {
+            this.finalExportFileName = finalExportFileName;
+            this.format = format;
+        }
     }
 
     private class FileChooserAccessory extends JPanel {
@@ -181,21 +221,5 @@ public class ImageExportChooser extends ImageIOFileChooser {
                 }
             }
         }
-    }
-
-    public int getExportWidth() {
-        return exportSettingsAccessory.width;
-    }
-
-    public int getExportHeight() {
-        return exportSettingsAccessory.height;
-    }
-
-    public boolean getCloseAfterSaving() {
-        return exportSettingsAccessory.closeAfterSaving.isSelected();
-    }
-
-    public boolean getCompensateAspectRatio() {
-        return exportSettingsAccessory.compensateAspectRatio.isSelected();
     }
 }

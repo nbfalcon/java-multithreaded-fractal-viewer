@@ -1,5 +1,6 @@
 package org.nbfalcon.fractalViewer.ui.components;
 
+import org.jetbrains.annotations.NotNull;
 import org.nbfalcon.fractalViewer.util.FileUtils;
 
 import javax.imageio.ImageIO;

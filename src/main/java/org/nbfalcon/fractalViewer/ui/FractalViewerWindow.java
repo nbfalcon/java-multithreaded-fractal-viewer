@@ -127,16 +127,8 @@ public class FractalViewerWindow extends JFrame {
                 saveImageChooser.setPalette(myViewer.getPalette());
                 int result = saveImageChooser.showSaveDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String format = saveImageChooser.getImageIOFormat();
-                    File saveTo = saveImageChooser.getSelectedFileWithExtension();
-
-                    if (format == null) {
-                        format = "png";
-                        saveTo = FileUtils.addExtension(saveTo, "png");
-                    }
-
-                    final File finalSaveTo = saveTo.getAbsoluteFile();
-                    final String finalFormat = format;
+                    ImageExportChooser.ImageExportTarget dest = saveImageChooser.getExportOutput();
+                    final File finalExportFileName = dest.finalExportFileName.getAbsoluteFile();
 
                     final Palette paletteForExport = saveImageChooser.getPalette();
                     final Fractal renderer = myViewer.getFractal();
@@ -153,7 +145,7 @@ public class FractalViewerWindow extends JFrame {
                                     .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
                     SimplePromise<Void> finalWritePromise = finalResult.map((image) -> {
                         try {
-                            ImageIO.write(image, finalFormat, finalSaveTo);
+                            ImageIO.write(image, dest.format, finalExportFileName);
                         } catch (IOException e) {
                             JOptionPane.showMessageDialog(FractalViewerWindow.this,
                                     "Failed to write image: " + e.getLocalizedMessage());
