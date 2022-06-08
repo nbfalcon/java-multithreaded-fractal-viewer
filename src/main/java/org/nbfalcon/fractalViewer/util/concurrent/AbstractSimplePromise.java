@@ -22,14 +22,31 @@ public abstract class AbstractSimplePromise<T> implements SimplePromise<T> {
         return new FlatMapPromise<>(this, mapper);
     }
 
-    private static class MappedPromise<I, R> extends AbstractSimplePromise<R> {
-        private final SimplePromise<I> upstreamPromise;
+    private abstract static class DerivedPromise<U, T> extends AbstractSimplePromise<T> {
+        protected final SimplePromise<U> upstreamPromise;
+
+        private DerivedPromise(SimplePromise<U> upstreamPromise) {
+            this.upstreamPromise = upstreamPromise;
+        }
+
+        @Override
+        public void onCancel(Runnable handler) {
+            upstreamPromise.onCancel(handler);
+        }
+
+        @Override
+        public void cancel() {
+            upstreamPromise.cancel();
+        }
+    }
+
+    private static class MappedPromise<I, R> extends DerivedPromise<I, R> {
         private final Object valueLock = new Object();
         private volatile @Nullable R value = null;
         private Function<I, R> mapperFn;
 
         private MappedPromise(SimplePromise<I> upstreamPromise, Function<I, R> mapper) {
-            this.upstreamPromise = upstreamPromise;
+            super(upstreamPromise);
             this.mapperFn = mapper;
         }
 
@@ -54,21 +71,15 @@ public abstract class AbstractSimplePromise<T> implements SimplePromise<T> {
                 });
             }
         }
-
-        @Override
-        public void cancel() {
-            upstreamPromise.cancel();
-        }
     }
 
-    private static class FlatMapPromise<I, R> extends AbstractSimplePromise<R> {
-        private final SimplePromise<I> upstreamPromise;
+    private static class FlatMapPromise<I, R> extends DerivedPromise<I, R> {
         private final Object stage2Lock = new Object();
         private Function<I, SimplePromise<R>> flatMapper;
         private volatile SimplePromise<R> stage2;
 
         private FlatMapPromise(SimplePromise<I> upstreamPromise, Function<I, SimplePromise<R>> flatMapper) {
-            this.upstreamPromise = upstreamPromise;
+            super(upstreamPromise);
             this.flatMapper = flatMapper;
         }
 
@@ -98,7 +109,7 @@ public abstract class AbstractSimplePromise<T> implements SimplePromise<T> {
 
         @Override
         public void cancel() {
-            upstreamPromise.cancel();
+            super.cancel();
             synchronized (stage2Lock) {
                 flatMapper = null;
             }

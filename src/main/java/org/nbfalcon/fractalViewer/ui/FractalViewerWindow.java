@@ -9,6 +9,7 @@ import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.FileUtils;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
+import org.nbfalcon.fractalViewer.util.swing.LoadingCursor;
 import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
 
 import javax.imageio.ImageIO;
@@ -38,6 +39,11 @@ public class FractalViewerWindow extends JFrame {
      */
     private final List<Fractal> myAvailableFractals;
 
+    /**
+     * We also want to apply export renderings to the menu bar, since that is not just the fractal viewport that is "in progress".
+     */
+    private final LoadingCursor exportRenderLoadingCursor;
+
     private FractalViewerWindow(List<Fractal> availableFractals, int initialFractal,
                                 @NotNull Palette initialPalette,
                                 @NotNull FractalViewerApplicationContext application,
@@ -59,6 +65,8 @@ public class FractalViewerWindow extends JFrame {
             application.registerWindow(newWindow, true);
             newWindow.requestFocus(FocusEvent.Cause.ACTIVATION);
         };
+
+        exportRenderLoadingCursor = new LoadingCursor(this);
 
         if (parent != null) {
             copySettingsFrom(parent);
@@ -139,14 +147,16 @@ public class FractalViewerWindow extends JFrame {
                     SimplePromise<BufferedImage> finalResult =
                             renderer.renderIterations(application.getExportPool(), myViewer.getViewPort(), width, height)
                                     .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
-                    finalResult.then((image) -> {
+                    SimplePromise<Void> finalWritePromise = finalResult.map((image) -> {
                         try {
                             ImageIO.write(image, finalFormat, finalSaveTo);
                         } catch (IOException e) {
                             JOptionPane.showMessageDialog(FractalViewerWindow.this,
                                     "Failed to write image: " + e.getLocalizedMessage());
                         }
+                        return null;
                     });
+                    exportRenderLoadingCursor.pushPromise(finalWritePromise);
 
                     if (saveImageChooser.exportSettingsAccessory.closeAfterSaving()) {
                         SwingUtilitiesX.closeWindow(FractalViewerWindow.this);

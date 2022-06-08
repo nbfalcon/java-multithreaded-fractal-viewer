@@ -9,6 +9,9 @@ public abstract class CompletableSimplePromiseBase<T> extends AbstractSimpleProm
     // We don't care about thread safety, since all accesses to this list are synchronized
     private final List<Consumer<T>> thenHandlers = new ArrayList<>();
     private final Object completionLock = new Object();
+
+    private final List<Runnable> onCancelHandlers = new ArrayList<>();
+
     private final AtomicBoolean isCancelled = new AtomicBoolean(false);
     // No need for volatile, since we synchronize everything
     private T completedWith;
@@ -46,11 +49,35 @@ public abstract class CompletableSimplePromiseBase<T> extends AbstractSimpleProm
     public void cancel() {
         if (isCancelled.compareAndSet(false, true)) {
             handleCancel();
+            synchronized (onCancelHandlers) {
+                onCancelHandlers.forEach(Runnable::run);
+            }
+            // We can't make this null, as onCancelHandlers is used for synchronization; this is a bit nicer than using
+            //  another Object lock.
+            onCancelHandlers.clear();
         }
     }
 
     public boolean isCancelled() {
         return isCancelled.get();
+    }
+
+    /**
+     * handler may be invoked concurrently with previous cancel handlers, either before or after them.
+     */
+    @Override
+    public void onCancel(Runnable handler) {
+        boolean wasAlreadyCancelled;
+        synchronized (onCancelHandlers) {
+            wasAlreadyCancelled = isCancelled();
+            if (!wasAlreadyCancelled) {
+                onCancelHandlers.add(handler);
+            }
+        }
+        // Don't slow down the first call to cancel by waiting here
+        if (wasAlreadyCancelled) {
+            handler.run();
+        }
     }
 
     /**

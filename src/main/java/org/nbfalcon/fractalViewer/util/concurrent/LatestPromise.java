@@ -1,9 +1,9 @@
 package org.nbfalcon.fractalViewer.util.concurrent;
 
-public class LatestPromise {
-    private volatile SimplePromise<?> lastPromise;
+public class LatestPromise<T> {
+    private volatile SimplePromise<T> lastPromise;
 
-    public <T> SimplePromise<T> setPromise(SimplePromise<T> next) {
+    public void setPromise(SimplePromise<T> next) {
         SimplePromise<?> prev = lastPromise;
         if (prev != null) {
             prev.cancel();
@@ -11,7 +11,5 @@ public class LatestPromise {
         lastPromise = next;
 
         next.then((ignored) -> this.lastPromise = null);
-
-        return next;
     }
 }

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.LatestPromise;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
+import org.nbfalcon.fractalViewer.util.swing.LoadingCursor;
 import org.nbfalcon.fractalViewer.util.swing.MouseEventX;
 
 import javax.swing.*;
@@ -25,9 +26,10 @@ public class AsyncImageViewer extends JPanel {
      * The default viewport used by new image viewers.
      */
     private static final ViewPort DEFAULT_VIEWPORT = new ViewPort(-2.0, 2.0, 2.0, -2.0);
+
     private final ViewPort selection = new ViewPort(0, 0, 0, 0);
     private final AbstractAction cancelSelectionAction;
-    private final LatestPromise cancelRedraw = new LatestPromise();
+    private final LatestPromise<BufferedImage> cancelRedraw = new LatestPromise<>();
     public Consumer<ViewPort> createNewWindowWithViewportUserAction;
     private AsyncImageRenderer renderer;
     private boolean havePressedSelection = false;
@@ -37,6 +39,11 @@ public class AsyncImageViewer extends JPanel {
     private ViewPort curViewPort;
     private ImageCtx bestImage = null;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
+
+    /**
+     * May be used to add additional in-progress stuff, like image export renderings.
+     */
+    public final LoadingCursor renderInProgress;
 
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
         super();
@@ -230,6 +237,8 @@ public class AsyncImageViewer extends JPanel {
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0), "zoomIn+");
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK), "zoomOut-");
         getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "zoomOut-");
+
+        renderInProgress = new LoadingCursor(this);
     }
 
     public AsyncImageViewer(AsyncImageRenderer renderer) {
@@ -391,10 +400,13 @@ public class AsyncImageViewer extends JPanel {
         // 3. Queue update
         // FIXME: there are no ordering constraints here, but this works since currently
         //  the MultithreadedExecutorPool always runs tasks in the correct order
-        cancelRedraw.setPromise(renderer.render(viewPort, getWidth(), getHeight())).then((image) -> SwingUtilities.invokeLater(() -> {
+        SimplePromise<BufferedImage> renderPromise = renderer.render(viewPort, getWidth(), getHeight());
+        cancelRedraw.setPromise(renderPromise);
+        renderPromise.then((image) -> SwingUtilities.invokeLater(() -> {
             bestImage = new ImageCtx(viewPort, image);
             repaint();
         }));
+        renderInProgress.pushPromise(renderPromise);
     }
 
     private ViewPort getCompensatedViewport() {

@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 public class FractalAsyncImageViewer extends AsyncImageViewer {
     private final FractalViewerApplicationContext application;
-    private final LatestPromise cancelPalette = new LatestPromise();
+    private final LatestPromise<BufferedImage> cancelPalette = new LatestPromise<>();
     private final CursorInfoLabel atCursor;
     private final JPanel bottomInfoPanel;
     private volatile FractalResult last = null;
@@ -111,6 +111,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
     private void updateAtCursorTextForMouseMove(int x, int y) {
         if (x > getWidth() || y > getHeight()) return;
 
+        // NOTE: currently fast zooming is not taken into account here
         ViewPort vp = getViewPort();
         double re = vp.getX((double) x / getWidth());
         double im = vp.getY((double) y / getHeight());
@@ -119,7 +120,10 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         FractalResult lastRender = last;
         String nIter = "";
         if (lastRender != null) {
-            nIter = ",n=" + lastRender.indexMap[y * getWidth() + x];
+            int i = y * getWidth() + x;
+            if (i < lastRender.indexMap.length) {
+                nIter = ",n=" + lastRender.indexMap[i];
+            }
         }
 
         atCursor.setText(pos + nIter);
@@ -133,7 +137,9 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         SimplePromise<BufferedImage> resultPromise = getSettingDeriveMaxIter()
                 ? application.getRenderPool().submit(() -> ArrayUtil.max(lastRender.indexMap)).flatMap(doMapping)
                 : doMapping.apply(last.maxIter);
-        return cancelPalette.setPromise(resultPromise);
+        cancelPalette.setPromise(resultPromise);
+        renderInProgress.pushPromise(resultPromise);
+        return resultPromise;
     }
 
     public Palette getPalette() {

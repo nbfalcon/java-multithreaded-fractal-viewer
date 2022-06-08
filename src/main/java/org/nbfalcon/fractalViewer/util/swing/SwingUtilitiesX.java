@@ -26,4 +26,13 @@ public class SwingUtilitiesX {
     public static void closeWindow(JFrame window) {
         window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
     }
+
+    public static void invokeNowOrLater(Runnable doRun) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            doRun.run();
+        }
+        else {
+            SwingUtilities.invokeLater(doRun);
+        }
+    }
 }
