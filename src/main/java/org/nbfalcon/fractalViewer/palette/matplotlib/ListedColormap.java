@@ -10,38 +10,53 @@ import java.awt.image.BufferedImage;
 public class ListedColormap extends NamedPaletteBase {
     private final float[][] colorList;
 
+    /**
+     * @param name      See {@link NamedPaletteBase#NamedPaletteBase(String)}.
+     * @param colorList [segment][r, g, b]
+     */
+
     public ListedColormap(String name, float[][] colorList) {
         super(name);
         this.colorList = colorList;
         assert colorList.length >= 2;
     }
 
-    private static int[] f2Int(float[] args) {
-        return new int[]{(int) (args[0] * 255), (int) (args[1] * 255), (int) (args[2] * 255)};
+    private static int f2Pixel(float mapped) {
+        return Math.min(255, (int) (mapped * 255));
     }
 
-    private int[] interpolate3(float[] a, float[] b, float target) {
-        return new int[]{
-                interpolate1(a[0], b[0], target),
-                interpolate1(a[1], b[1], target),
-                interpolate1(a[2], b[2], target)};
+    private static int[] f2Pixel(float[] args) {
+        return new int[]{f2Pixel(args[0]), f2Pixel(args[1]), f2Pixel(args[2])};
     }
 
-    private int interpolate1(float a, float b, float target) {
-        float dy = b - a;
-        // dx = 1.0 / colorList.length
-        float ramp = dy * (colorList.length - 1);
+    private static float[] linterpolate3(float[] low, float[] high, float distanceToLower) {
+        return new float[]{
+                // Basically a biased average
+                low[0] * distanceToLower + high[0] * (1 - distanceToLower),
+                low[1] * distanceToLower + high[1] * (1 - distanceToLower),
+                low[2] * distanceToLower + high[2] * (1 - distanceToLower)
+        };
+    }
 
-        return (int) (ramp * target * 255);
+    private static float[] colorAtPoint(float[][] colors, float x) {
+        // We interpolate with this + the one above it
+        int lower = (int) (x * (colors.length - 1));
+
+        // The "edge" case
+        if (lower < 0) {
+            return colors[0];
+        } else if (lower >= colors.length - 1) {
+            return colors[colors.length - 1];
+        }
+
+        // How far are we between x[lower] and x[lower + 1], between [0;1]
+        float distanceXToLower = x - (float) lower / (colors.length - 1);
+
+        return linterpolate3(colors[lower], colors[lower + 1], distanceXToLower);
     }
 
     @Override
     public SimplePromise<BufferedImage> map2Image(int[] iterMap2D, int width, int height, int maxIter, MultithreadedExecutor pool) {
-        return Palette.map2Image1(iterMap2D, width, height, maxIter, pool, (filled) -> {
-            int iStart = (int) (filled * (colorList.length - 1));
-            if (iStart >= colorList.length - 1) return f2Int(colorList[colorList.length - 1]);
-
-            return interpolate3(colorList[iStart], colorList[iStart + 1], filled);
-        });
+        return Palette.map2Image1(iterMap2D, width, height, maxIter, pool, (filled) -> f2Pixel(colorAtPoint(colorList, filled)));
     }
 }

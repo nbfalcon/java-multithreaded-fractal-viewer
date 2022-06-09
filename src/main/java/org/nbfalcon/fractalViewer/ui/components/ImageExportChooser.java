@@ -62,12 +62,12 @@ public class ImageExportChooser extends ImageIOFileChooser {
     public int showSaveDialog(Component parent) throws HeadlessException {
         if (suggestNewFileNameOnNextDialog) {
             suggestFileName();
-            exportCounter++;
             suggestNewFileNameOnNextDialog = false;
         }
         int result = super.showSaveDialog(parent);
         if (result == APPROVE_OPTION) {
             suggestNewFileNameOnNextDialog = true;
+            exportCounter++;
         }
         return result;
     }
@@ -156,8 +156,8 @@ public class ImageExportChooser extends ImageIOFileChooser {
             widthInput.setToolTipText("Width of the image");
             heightInput.setToolTipText("Height of the image");
 
-            heightInput.addChangeListener(changeEvent -> updateParentFileName(getWidth(), (int) heightInput.getValue()));
-            widthInput.addChangeListener(changeEvent -> updateParentFileName((int) widthInput.getValue(), getHeight()));
+            heightInput.addChangeListener(changeEvent -> updateParentFileName(width, (int) heightInput.getValue()));
+            widthInput.addChangeListener(changeEvent -> updateParentFileName((int) widthInput.getValue(), height));
 
             GridBagLayout layout = new GridBagLayout();
             setLayout(layout);

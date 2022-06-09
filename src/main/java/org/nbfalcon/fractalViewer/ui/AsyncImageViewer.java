@@ -409,7 +409,7 @@ public class AsyncImageViewer extends JPanel {
 
     private ViewPort getCompensatedViewport() {
         if (!settingCompensateAspectRatio) return curViewPort.copy();
-        return curViewPort.stretchForAspectRatio(getHeight(), getWidth());
+        return curViewPort.stretchForAspectRatio(getWidth(), getHeight());
     }
 
     public void copySettingsFrom(AsyncImageViewer source) {

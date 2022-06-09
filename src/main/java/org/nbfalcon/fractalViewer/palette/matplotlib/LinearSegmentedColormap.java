@@ -22,33 +22,62 @@ public class LinearSegmentedColormap extends NamedPaletteBase {
         this.blue = blue;
     }
 
-    private int findSegment(float[][] search, float target) {
-        int i = 0;
-        for (float[] xy0y1 : search) {
-            if (!(target < xy0y1[0])) break;
-            i++;
+    /**
+     * Finds the segment corresponding to x in SEARCH.
+     *
+     * Returns the lower index.
+     *
+     * This function behaves similarly to numpy.searchsorted(search[:,0]).
+     */
+    private static int findSegment(float[][] search, float x) {
+        for (int i = 0; i < search.length; i++) {
+            if (search[i][0] >= x) {
+                // We would have to insert here
+                return i;
+            }
         }
-        i = Math.max(search.length - 2, i);
-        return i;
+        return search.length;
     }
 
-    private int linterpolate(float target, float[][] search, int i) {
-        float dy = search[i + 1][1] - search[i][2];
-        float dx = search[i + 1][0] - search[i][0];
-        float ramp = dy / dx;
+    /**
+     * Get the color at X in the SEARCH space.
+     *
+     * Based on matplotlib.colors._create_lookup_table
+     */
+    private static float colorAtPoint(float[][] search, float x) {
+        int ind = findSegment(search, x);
 
-        return (int) (ramp * target * 255);
+        // We are at/beyond the edges.
+        if (ind == 0) {
+            return search[0][2]; // y1[0]
+        } else if (ind == search.length) {
+            return search[search.length - 1][1]; // y0[-1]
+        }
+
+        // xind[1:-1] - x[ind - 1] -> x - x[ind - 1]
+        float distanceXToLower = x - search[ind - 1][0];
+        // / (x[ind] - x[ind - 1]) -> x[ind] - x[ind - 1]
+        float dx = search[ind][0] - search[ind - 1][0];
+        // y0[ind] - y1[ind - 1] -> y0[ind] - y1[ind]; NOTE: y0 = [1], y1 = [2]
+        float dy = search[ind][1] - search[ind - 1][2];
+
+        return (dy / dx) * distanceXToLower + search[ind - 1][2];
+    }
+
+    private static int fToPixel(float mapped) {
+        return Math.min(255, (int) (mapped * 255));
+    }
+
+    private static int pixelForColor(float[][] search, float x) {
+        return fToPixel(colorAtPoint(search, x));
     }
 
     @Override
     public SimplePromise<BufferedImage> map2Image(int[] iterMap2D, int width, int height, int maxIter, MultithreadedExecutor pool) {
-        return Palette.map2Image1(iterMap2D, width, height, maxIter, pool, (filled) -> {
-            int r = findSegment(red, filled), g = findSegment(green, filled), b = findSegment(blue, filled);
-            return new int[]{
-                    linterpolate(filled, red, r),
-                    linterpolate(filled, green, g),
-                    linterpolate(filled, blue, b),
-            };
+        return Palette.map2Image1(iterMap2D, width, height, maxIter, pool, (filled) -> new int[]{
+                pixelForColor(red, filled),
+                pixelForColor(green, filled),
+                pixelForColor(blue, filled)
         });
     }
 }

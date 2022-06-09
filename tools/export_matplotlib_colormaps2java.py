@@ -1,3 +1,4 @@
+#!/bin/env python3
 # This script automatically generates java constructor invocations for matplotlib's built-in colormaps
 import os.path
 from contextlib import contextmanager
@@ -6,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
-cmaps_want = [
+CMAPS_WANT = [
     ['viridis', 'plasma', 'inferno', 'magma', 'cividis'],
     ['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
      'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
@@ -67,16 +68,16 @@ class SourceWriter:
 
 
 def print_colormap(cm, writer: SourceWriter):
-    name = cm.name.upper()
     writer.write("public static final ")
     if isinstance(cm, ListedColormap):
-        writer.write(f"ListedColormap {name} = new ListedColormap(\"{name}\",\n")
+        writer.write(f"ListedColormap {cm.name.upper()} = new ListedColormap(\"{cm.name}\",\n")
         with writer.indented():
             writer.write_array(cm.colors)
         writer.write(");\n")
     elif isinstance(cm, LinearSegmentedColormap):
         # We don't care about violating anything here, this is just a scraping script
-        writer.write(f"LinearSegmentedColormap {name} = new LinearSegmentedColormap(\"{name}\",\n")
+        writer.write(
+            f"LinearSegmentedColormap {cm.name.upper()} = new LinearSegmentedColormap(\"{cm.name}\",\n")
         with writer.indented():
             for rg in ('red', 'green'):
                 writer.write(f"/* {rg}: */ ")
@@ -120,7 +121,7 @@ import java.util.List;
     writer.writeln("@SuppressWarnings(\"SpellCheckingInspection\")")
     writer.writeln(f"public class {clazz} {{")
     with writer.indented():
-        for cm_want in iflatten(cmaps_want):
+        for cm_want in iflatten(CMAPS_WANT):
             cm_want: str
             print_colormap(plt.get_cmap(cm_want), writer)
             writer.writeln()
@@ -132,7 +133,7 @@ import java.util.List;
         #             writer.write(",\n")
         writer.writeln("public static final List<Palette> ALL_COLORMAPS = List.of(")
         with writer.indented():
-            for group_lastp, group in with_lastp(cmaps_want):
+            for group_lastp, group in with_lastp(CMAPS_WANT):
                 arg = ", ".join(cm.upper() for cm in group)
                 if not group_lastp:
                     arg += ',\n'
