@@ -18,6 +18,10 @@ public class MultithreadedExecutorPool implements MultithreadedExecutor {
         this.nThreads = nThreads;
     }
 
+    public int getNThreads() {
+        return nThreads;
+    }
+
     @Override
     public SimplePromise<Void> submit(Task task) {
         final int totalThreads = nThreads;

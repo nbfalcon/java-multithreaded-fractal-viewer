@@ -6,7 +6,6 @@ import org.nbfalcon.fractalViewer.fractals.Fractal;
 import org.nbfalcon.fractalViewer.palette.Palette;
 import org.nbfalcon.fractalViewer.palette.PaletteUtil;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
-import org.nbfalcon.fractalViewer.util.FileUtils;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import org.nbfalcon.fractalViewer.util.swing.LoadingCursor;
@@ -182,6 +181,14 @@ public class FractalViewerWindow extends JFrame {
         });
         quitAction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
         file.add(quitAction);
+        JMenuItem appSettings = new JMenuItem(new AbstractAction("Application Settings") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                application.runApplicationSettingsUI();
+            }
+        });
+        appSettings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+        file.add(appSettings);
 
         JMenu fractalMenu = new JMenu("Fractal");
 

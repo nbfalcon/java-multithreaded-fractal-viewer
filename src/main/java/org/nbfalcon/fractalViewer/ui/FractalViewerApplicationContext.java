@@ -11,9 +11,11 @@ public interface FractalViewerApplicationContext {
 
     void shutdownApplication();
 
-    ImageExportChooser getExportChooser();
-
     MultithreadedExecutor getRenderPool();
 
     MultithreadedExecutor getExportPool();
+
+    ImageExportChooser getExportChooser();
+
+    void runApplicationSettingsUI();
 }
