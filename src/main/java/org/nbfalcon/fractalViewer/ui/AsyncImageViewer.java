@@ -429,10 +429,9 @@ public class AsyncImageViewer extends JPanel {
         this.haveSelection = source.haveSelection;
         this.selection.setFrom(source.selection);
 
-        this.bestImage = source.bestImage;
-        // Maybe an update is already queued in the source window, so this is the best we have
-        this.lastUpdateWidth = bestImage.image.getWidth();
-        this.lastUpdateHeight = bestImage.image.getHeight();
+        ImageCtx prevBest = source.bestImage;
+        this.bestImage = prevBest != null ? new ImageCtx(prevBest.image, prevBest.viewPort, newCounter()) : null;
+        // Don't set lastUpdateWidth/Height, so that we force a redraw on componentShown
     }
 
     public interface AsyncImageRenderer {

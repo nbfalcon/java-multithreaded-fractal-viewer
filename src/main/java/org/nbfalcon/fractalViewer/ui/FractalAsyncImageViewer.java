@@ -189,6 +189,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
 
     public void copySettingsFrom(FractalAsyncImageViewer myViewer) {
         super.copySettingsFrom(myViewer);
+        this.last = myViewer.last;
         this.settingDeriveMaxIter = myViewer.settingDeriveMaxIter;
         setSettingShowCursorInfo(myViewer.getSettingShowCursorInfo());
     }
