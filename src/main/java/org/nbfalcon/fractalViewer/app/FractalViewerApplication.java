@@ -149,6 +149,8 @@ public class FractalViewerApplication implements FractalViewerApplicationContext
 
         public void tryApply() {
             synchronized (poolsShutdownLock) {
+                // BUG: calling this will change the pools, meaning that closing all windows will no longer wait
+                //  this is not important enough to fix, though.
                 if (onAllWindowsClosed.isDone()) return;
 
                 if ((int) renderThreads.getValue() != myRenderPool.getNThreads()) {

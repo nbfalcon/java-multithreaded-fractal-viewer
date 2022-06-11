@@ -7,6 +7,7 @@ import org.nbfalcon.fractalViewer.palette.Palette;
 import org.nbfalcon.fractalViewer.palette.PaletteUtil;
 import org.nbfalcon.fractalViewer.ui.components.ImageExportChooser;
 import org.nbfalcon.fractalViewer.util.ViewPort;
+import org.nbfalcon.fractalViewer.util.concurrent.PromiseUtil;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import org.nbfalcon.fractalViewer.util.swing.LoadingCursor;
 import org.nbfalcon.fractalViewer.util.swing.SwingUtilitiesX;
@@ -142,6 +143,7 @@ public class FractalViewerWindow extends JFrame {
                     SimplePromise<BufferedImage> finalResult =
                             renderer.renderIterations(application.getExportPool(), viewPort, width, height)
                                     .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
+                    PromiseUtil.timePromise(finalResult, "Rendering (export) of " + dest.finalExportFileName.getName());
                     SimplePromise<Void> finalWritePromise = finalResult.map((image) -> {
                         try {
                             ImageIO.write(image, dest.format, finalExportFileName);

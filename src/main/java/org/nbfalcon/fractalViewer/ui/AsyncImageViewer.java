@@ -3,6 +3,7 @@ package org.nbfalcon.fractalViewer.ui;
 import org.jetbrains.annotations.Nullable;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.LatestPromise;
+import org.nbfalcon.fractalViewer.util.concurrent.PromiseUtil;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 import org.nbfalcon.fractalViewer.util.swing.LoadingCursor;
 import org.nbfalcon.fractalViewer.util.swing.MouseEventX;
@@ -405,6 +406,7 @@ public class AsyncImageViewer extends JPanel {
         SimplePromise<BufferedImage> renderPromise = renderer.render(viewPort, getWidth(), getHeight());
         cancelRedraw.setPromise(renderPromise);
         int nextCounter = newCounter();
+        PromiseUtil.timePromise(renderPromise, "Rendering (UI) " + nextCounter);
         renderPromise.then((image) -> SwingUtilities.invokeLater(() -> updateImage(image, viewPort, nextCounter)));
         renderInProgress.pushPromise(renderPromise);
     }

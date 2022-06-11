@@ -8,6 +8,7 @@ import org.nbfalcon.fractalViewer.util.ArrayUtil;
 import org.nbfalcon.fractalViewer.util.Complex;
 import org.nbfalcon.fractalViewer.util.ViewPort;
 import org.nbfalcon.fractalViewer.util.concurrent.LatestPromise;
+import org.nbfalcon.fractalViewer.util.concurrent.PromiseUtil;
 import org.nbfalcon.fractalViewer.util.concurrent.SimplePromise;
 
 import javax.swing.*;
@@ -152,8 +153,9 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         this.selectedPalette = newPalette;
         FractalResult lastRender = this.last;
         if (lastRender != null) {
-            SimplePromise<BufferedImage> imagePromise = queuePaletteRerender(lastRender);
             int nextCounter = newCounter();
+            SimplePromise<BufferedImage> imagePromise = queuePaletteRerender(lastRender);
+            PromiseUtil.timePromise(imagePromise, "Palette remap " + nextCounter);
             imagePromise.then((image) -> SwingUtilities.invokeLater(() -> {
                 // This will be serialized, so either the fractal image is set later (overriding this change) or
                 //  this is running after the fractal image was set, in which case the iteration count will differ
