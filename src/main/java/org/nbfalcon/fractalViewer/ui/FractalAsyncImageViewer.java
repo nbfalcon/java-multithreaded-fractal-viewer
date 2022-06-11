@@ -49,7 +49,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
                         application.getRenderPool(), viewPort, width, height);
 
                 return fractalResult.flatMap((indexMap) -> {
-                    final FractalResult result = new FractalResult(indexMap, width, height, maxIter);
+                    final FractalResult result = new FractalResult(indexMap, width, height, maxIter, viewPort);
                     last = result;
                     SwingUtilities.invokeLater(FractalAsyncImageViewer.this::updateAtCursorForMousePosition);
                     return queuePaletteRerender(result);
@@ -153,6 +153,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         FractalResult lastRender = this.last;
         if (lastRender != null) {
             SimplePromise<BufferedImage> imagePromise = queuePaletteRerender(lastRender);
+            int nextCounter = newCounter();
             imagePromise.then((image) -> SwingUtilities.invokeLater(() -> {
                 // This will be serialized, so either the fractal image is set later (overriding this change) or
                 //  this is running after the fractal image was set, in which case the iteration count will differ
@@ -160,7 +161,7 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
                 //  `fractalResult.flatMap` above, we would map the image twice. This is, however, both unlikely
                 //  and not too expensive; the alternative would be
                 if (lastRender == this.last) {
-                    updateImage(image);
+                    updateImage(image, lastRender.viewPort, nextCounter);
                 }
             }));
         }
@@ -195,12 +196,14 @@ public class FractalAsyncImageViewer extends AsyncImageViewer {
         public final int width;
         public final int height;
         public final int maxIter;
+        public final ViewPort viewPort;
 
-        private FractalResult(int[] indexMap, int width, int height, int maxIter) {
+        private FractalResult(int[] indexMap, int width, int height, int maxIter, ViewPort viewPort) {
             this.indexMap = indexMap;
             this.width = width;
             this.height = height;
             this.maxIter = maxIter;
+            this.viewPort = viewPort;
         }
     }
 }

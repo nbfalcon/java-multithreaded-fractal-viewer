@@ -41,6 +41,7 @@ public class AsyncImageViewer extends JPanel {
     private boolean settingCompensateAspectRatio;
     private ViewPort curViewPort;
     private ImageCtx bestImage = null;
+    private int bestImageCounter = 0;
     private int lastUpdateWidth = -2, lastUpdateHeight = -2;
 
     public AsyncImageViewer(AsyncImageRenderer renderer, boolean settingSquareSelection, boolean settingCompensateAspectRatio, ViewPort viewPort) {
@@ -374,9 +375,14 @@ public class AsyncImageViewer extends JPanel {
         super.paintChildren(g);
     }
 
-    public void updateImage(BufferedImage image) {
-        this.bestImage.image = image;
-        repaint();
+    public void updateImage(BufferedImage image, ViewPort actualViewPort, int counter) {
+        assert SwingUtilities.isEventDispatchThread();
+        ImageCtx prev = bestImage;
+        // Either we are next or overflow
+        if (prev == null || counter > prev.counter || (prev.counter > 0 && counter < 0)) {
+            this.bestImage = new ImageCtx(image, actualViewPort, counter);
+            repaint();
+        }
     }
 
     /**
@@ -396,15 +402,15 @@ public class AsyncImageViewer extends JPanel {
         lastUpdateWidth = getWidth();
 
         // 3. Queue update
-        // FIXME: there are no ordering constraints here, but this works since currently
-        //  the MultithreadedExecutorPool always runs tasks in the correct order
         SimplePromise<BufferedImage> renderPromise = renderer.render(viewPort, getWidth(), getHeight());
         cancelRedraw.setPromise(renderPromise);
-        renderPromise.then((image) -> SwingUtilities.invokeLater(() -> {
-            bestImage = new ImageCtx(viewPort, image);
-            repaint();
-        }));
+        int nextCounter = newCounter();
+        renderPromise.then((image) -> SwingUtilities.invokeLater(() -> updateImage(image, viewPort, nextCounter)));
         renderInProgress.pushPromise(renderPromise);
+    }
+
+    public int newCounter() {
+        return bestImageCounter++;
     }
 
     private ViewPort getCompensatedViewport() {
@@ -452,12 +458,14 @@ public class AsyncImageViewer extends JPanel {
     }
 
     private static class ImageCtx {
+        public final BufferedImage image;
         public final ViewPort viewPort;
-        public BufferedImage image;
+        public final int counter;
 
-        public ImageCtx(ViewPort viewPort, BufferedImage image) {
-            this.viewPort = viewPort;
+        public ImageCtx(BufferedImage image, ViewPort viewPort, int counter) {
             this.image = image;
+            this.viewPort = viewPort;
+            this.counter = counter;
         }
     }
 
