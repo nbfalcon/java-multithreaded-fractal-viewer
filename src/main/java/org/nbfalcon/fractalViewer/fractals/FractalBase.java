@@ -15,9 +15,9 @@ public abstract class FractalBase implements Fractal {
     protected FractalBase() {
     }
 
-    public static int calcIterations(Complex c, Complex z, int maxIter, double max) {
+    public static int calcIterations(Complex c, Complex z, int maxIter, double max2) {
         int i;
-        for (i = 0; i < maxIter && z.abs() <= max; i++) {
+        for (i = 0; i < maxIter && z.abs2() <= max2; i++) {
             z = z.multiply(z).add(c);
         }
         return i;

@@ -360,6 +360,8 @@ public class AsyncImageViewer extends JPanel {
                             getWidth() - slice.deltaClipWidth, getHeight() - slice.deltaClipHeight,
                             null);
                 } else {
+                    // For zoom-out, don't do anything fancy: drawing white borders around a downscaled image does not
+                    //  look good.
                     g.drawImage(bestImage.image, 0, 0, getWidth(), getHeight(), null);
                 }
             }
@@ -454,6 +456,7 @@ public class AsyncImageViewer extends JPanel {
         }
 
         public boolean isZoomOut() {
+            // We are squishing the image on one axis -> zoom out
             return offX != 0 && deltaClipWidth != 0 || offY != 0 && deltaClipHeight != 0;
         }
     }

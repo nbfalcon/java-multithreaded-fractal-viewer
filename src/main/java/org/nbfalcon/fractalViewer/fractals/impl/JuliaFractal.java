@@ -17,7 +17,7 @@ public class JuliaFractal extends FractalBase {
     @Override
     public SimplePromise<int[]> renderIterations(MultithreadedExecutor pool, ViewPort viewPort, int width, int height) {
         Complex juliaPoint = new Complex(x, y);
-        return renderIterations1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(juliaPoint, xy, maxIter, 10.0));
+        return renderIterations1(pool, viewPort, width, height, (xy, maxIter) -> calcIterations(juliaPoint, xy, maxIter, 100.0));
     }
 
     @Override
