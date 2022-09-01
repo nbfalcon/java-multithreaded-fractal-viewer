@@ -9,12 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="research-x" />
         <module name="java-fractal-viewer-additional-tests" />
+        <module name="java-fractal-viewer-research-x" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="java-fractal-viewer" options="" />
+      <module name="java-fractal-viewer-research-x" options="--add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED" />
       <module name="research-x" options="--add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED" />
     </option>
   </component>

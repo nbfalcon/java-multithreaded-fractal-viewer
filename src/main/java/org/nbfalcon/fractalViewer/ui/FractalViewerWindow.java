@@ -44,11 +44,8 @@ public class FractalViewerWindow extends JFrame {
      */
     private final LoadingCursor exportRenderLoadingCursor;
 
-    private FractalViewerWindow(List<Fractal> availableFractals, int initialFractal,
-                                @NotNull Palette initialPalette,
-                                @NotNull FractalViewerApplicationContext application,
-                                @Nullable FractalViewerWindow parent) {
-        super("Fractal Viewer - Mandelbrot");
+    private FractalViewerWindow(List<Fractal> availableFractals, int initialFractalIndex, @NotNull Palette initialPalette, @NotNull FractalViewerApplicationContext application, @Nullable FractalViewerWindow parent) {
+        super(getAppropriateWindowTitle(availableFractals.get(initialFractalIndex)));
 
         // We need WindowClosed to be dispatched
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -56,7 +53,7 @@ public class FractalViewerWindow extends JFrame {
         // Needs to be initialized now, since createMenu() reads some of its fields for view defaults
         this.myAvailableFractals = availableFractals;
 
-        this.myViewer = new FractalAsyncImageViewer(application, availableFractals.get(initialFractal), initialPalette);
+        this.myViewer = new FractalAsyncImageViewer(application, availableFractals.get(initialFractalIndex), initialPalette);
         this.application = application;
 
         myViewer.createNewWindowWithViewportUserAction = (sliced) -> {
@@ -79,17 +76,16 @@ public class FractalViewerWindow extends JFrame {
         pack();
     }
 
-    public FractalViewerWindow(List<Fractal> availableFractals, int initialFractal,
-                               @NotNull Palette initialPalette,
-                               @NotNull FractalViewerApplicationContext application) {
+    public FractalViewerWindow(List<Fractal> availableFractals, int initialFractal, @NotNull Palette initialPalette, @NotNull FractalViewerApplicationContext application) {
         this(availableFractals, initialFractal, initialPalette, application, null);
     }
 
+    private static String getAppropriateWindowTitle(Fractal currentFractal) {
+        return "Fractal Viewer - " + currentFractal.getName();
+    }
+
     private FractalViewerWindow copyWin() {
-        FractalViewerWindow window = new FractalViewerWindow(
-                myAvailableFractals.stream().map(Fractal::copy).collect(Collectors.toList()),
-                getSelectedFractalIndex(), myViewer.getPalette(),
-                application, this);
+        FractalViewerWindow window = new FractalViewerWindow(myAvailableFractals.stream().map(Fractal::copy).collect(Collectors.toList()), getSelectedFractalIndex(), myViewer.getPalette(), application, this);
 
         window.setSize(getSize());
         return window;
@@ -140,16 +136,13 @@ public class FractalViewerWindow extends JFrame {
                     if (saveImageChooser.getCompensateAspectRatio()) {
                         viewPort = viewPort.stretchForAspectRatio(width, height);
                     }
-                    SimplePromise<BufferedImage> finalResult =
-                            renderer.renderIterations(application.getExportPool(), viewPort, width, height)
-                                    .flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
+                    SimplePromise<BufferedImage> finalResult = renderer.renderIterations(application.getExportPool(), viewPort, width, height).flatMap((iterations) -> paletteForExport.map2Image(iterations, width, height, nIter, application.getExportPool()));
                     PromiseUtil.timePromise(finalResult, "Rendering (export) of " + dest.finalExportFileName.getName());
                     SimplePromise<Void> finalWritePromise = finalResult.map((image) -> {
                         try {
                             ImageIO.write(image, dest.format, finalExportFileName);
                         } catch (IOException e) {
-                            JOptionPane.showMessageDialog(FractalViewerWindow.this,
-                                    "Failed to write image: " + e.getLocalizedMessage());
+                            JOptionPane.showMessageDialog(FractalViewerWindow.this, "Failed to write image: " + e.getLocalizedMessage());
                         }
                         return null;
                     });
@@ -174,8 +167,7 @@ public class FractalViewerWindow extends JFrame {
         JMenuItem quitAction = new JMenuItem(new AbstractAction("Quit") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int result = JOptionPane.showConfirmDialog(FractalViewerWindow.this,
-                        "Close all Windows and Quit?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                int result = JOptionPane.showConfirmDialog(FractalViewerWindow.this, "Close all Windows and Quit?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     application.shutdownApplication();
                 }
@@ -211,9 +203,7 @@ public class FractalViewerWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 SettingsUI settingsUI = myViewer.getFractal().createSettingsUI();
-                int result = JOptionPane.showOptionDialog(null, settingsUI.getSettingsPanel(),
-                        "Configure Fractal", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                        null, new String[]{"Apply", "Cancel"}, JOptionPane.OK_OPTION);
+                int result = JOptionPane.showOptionDialog(null, settingsUI.getSettingsPanel(), "Configure Fractal", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Apply", "Cancel"}, JOptionPane.OK_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     settingsUI.apply();
                     myViewer.redrawAsync();
@@ -262,20 +252,17 @@ public class FractalViewerWindow extends JFrame {
         });
         view.add(squarifyWindow);
         JCheckBoxMenuItem forceSquareSelection = new JCheckBoxMenuItem("Always Use Square Selection");
-        SwingUtilitiesX.dataBind(forceSquareSelection,
-                myViewer::getSettingSquareSelection, myViewer::setSettingSquareSelection);
+        SwingUtilitiesX.dataBind(forceSquareSelection, myViewer::getSettingSquareSelection, myViewer::setSettingSquareSelection);
         view.add(forceSquareSelection);
         JCheckBoxMenuItem compensateAspectRatio = new JCheckBoxMenuItem("Compensate Aspect Ratio");
-        SwingUtilitiesX.dataBind(compensateAspectRatio,
-                myViewer::getSettingCompensateAspectRatio, myViewer::setSettingCompensateAspectRatio);
+        SwingUtilitiesX.dataBind(compensateAspectRatio, myViewer::getSettingCompensateAspectRatio, myViewer::setSettingCompensateAspectRatio);
         view.add(compensateAspectRatio);
         JCheckBoxMenuItem showCursorInfo = new JCheckBoxMenuItem("Show position at cursor");
         showCursorInfo.setToolTipText("Show the position and maximum iteration of the rendering at the cursor position.");
         SwingUtilitiesX.dataBind(showCursorInfo, myViewer::getSettingShowCursorInfo, myViewer::setSettingShowCursorInfo);
         view.add(showCursorInfo);
         JCheckBoxMenuItem deriveMaxIter = new JCheckBoxMenuItem("Derive MaxIter");
-        deriveMaxIter.setToolTipText("Derive the actual maximum iteration count from the rendering.\n" +
-                "This option was mainly an experiment; in practice, it will only make a slight difference when zoomed in.");
+        deriveMaxIter.setToolTipText("Derive the actual maximum iteration count from the rendering.\n" + "This option was mainly an experiment; in practice, it will only make a slight difference when zoomed in.");
         SwingUtilitiesX.dataBind(deriveMaxIter, myViewer::getSettingDeriveMaxIter, myViewer::setSettingDeriveMaxIter);
         view.add(deriveMaxIter);
 
@@ -313,10 +300,15 @@ public class FractalViewerWindow extends JFrame {
         JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(new AbstractAction(fractal.getName()) {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                myViewer.setFractal(fractal);
+                setCurrentFractal(fractal);
             }
         });
         buttonGroup.add(menuItem);
         return menuItem;
+    }
+
+    private void setCurrentFractal(Fractal fractal) {
+        myViewer.setFractal(fractal);
+        setTitle(getAppropriateWindowTitle(fractal));
     }
 }
